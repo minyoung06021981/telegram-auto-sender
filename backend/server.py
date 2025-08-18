@@ -67,6 +67,7 @@ class TelegramVerify(BaseModel):
     phone_code: Optional[str] = None
     password: Optional[str] = None
     session_id: str
+    phone_number: Optional[str] = None
 
 class GroupCreate(BaseModel):
     name: str
