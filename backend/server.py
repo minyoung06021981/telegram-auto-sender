@@ -1008,7 +1008,7 @@ async def auto_sender_cycle(session_id: str):
         })
         
         # Send messages with improved timing
-        await send_messages_job(session_id, available_groups, template["content"])
+        await send_messages_job_improved(session_id, available_groups, template["content"])
         
         await sio.emit('scheduler_status', {
             'session_id': session_id,
