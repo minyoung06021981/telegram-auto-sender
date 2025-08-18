@@ -57,15 +57,26 @@ const LoginPage = () => {
     setLoading(true);
     
     try {
-      const response = await axios.post(`${API}/auth/verify`, {
-        session_id: sessionData.session_id,
-        phone_code: formData.phone_code,
-        password: formData.password
-      });
+      const requestData = {
+        session_id: sessionData.session_id
+      };
+      
+      // Add phone_code if provided and not requires_password yet
+      if (formData.phone_code && !sessionData?.requires_password) {
+        requestData.phone_code = formData.phone_code;
+      }
+      
+      // Add password if this is a 2FA step
+      if (sessionData?.requires_password && formData.password) {
+        requestData.password = formData.password;
+      }
+      
+      const response = await axios.post(`${API}/auth/verify`, requestData);
       
       if (response.data.requires_password) {
+        // Update session data to show password field
         setSessionData(response.data);
-        // Stay on verify step, show password field
+        addNotification('Masukkan password 2FA Anda', 'info');
       } else if (response.data.authenticated) {
         setCurrentSession(response.data);
         setIsAuthenticated(true);
@@ -73,7 +84,9 @@ const LoginPage = () => {
         loadSessions(); // Refresh sessions list
       }
     } catch (error) {
-      addNotification(error.response?.data?.detail || 'Verifikasi gagal', 'error');
+      const errorMsg = error.response?.data?.detail || 'Verifikasi gagal';
+      addNotification(errorMsg, 'error');
+      console.error('Verification error:', error);
     }
     
     setLoading(false);
