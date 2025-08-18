@@ -4,7 +4,7 @@ import { AppContext } from '../App';
 
 const Navigation = () => {
   const location = useLocation();
-  const { currentSession, setIsAuthenticated, setCurrentSession } = useContext(AppContext);
+  const { currentSession, setIsAuthenticated, setCurrentSession, clearSessionFromStorage } = useContext(AppContext);
 
   const navItems = [
     {
