@@ -3,10 +3,12 @@ import axios from 'axios';
 import { AppContext } from '../App';
 
 const Dashboard = () => {
-  const { API, currentSession, addNotification } = useContext(AppContext);
+  const { API, currentSession, addNotification, socket } = useContext(AppContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [schedulerActive, setSchedulerActive] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [showLogs, setShowLogs] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
