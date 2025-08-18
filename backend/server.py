@@ -864,30 +864,65 @@ async def stop_scheduler(session_id: str):
     return {"message": "Scheduler stopped"}
 
 async def auto_sender_cycle(session_id: str):
-    """Automatic sender cycle job"""
+    """Automatic sender cycle job with improved timing"""
     try:
+        # Emit status update
+        await sio.emit('scheduler_status', {
+            'session_id': session_id,
+            'status': 'cycle_started',
+            'message': 'Memulai siklus pengiriman pesan...',
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
         # Cleanup temporary blacklists
         await cleanup_temporary_blacklists()
         
         # Get default message template
         template = await db.message_templates.find_one({"is_default": True})
         if not template:
+            await sio.emit('scheduler_status', {
+                'session_id': session_id,
+                'status': 'no_template',
+                'message': 'Tidak ada template default ditemukan',
+                'timestamp': datetime.utcnow().isoformat()
+            })
             return
         
         # Get available groups
         available_groups = await get_available_groups(session_id)
         if not available_groups:
+            await sio.emit('scheduler_status', {
+                'session_id': session_id,
+                'status': 'no_groups',
+                'message': 'Tidak ada grup yang tersedia untuk mengirim pesan',
+                'timestamp': datetime.utcnow().isoformat()
+            })
             return
         
-        # Send messages
+        await sio.emit('scheduler_status', {
+            'session_id': session_id,
+            'status': 'sending_messages',
+            'message': f'Mengirim pesan ke {len(available_groups)} grup...',
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        # Send messages with improved timing
         await send_messages_job(session_id, available_groups, template["content"])
         
-        # Schedule next cycle
+        await sio.emit('scheduler_status', {
+            'session_id': session_id,
+            'status': 'cycle_completed',
+            'message': 'Siklus pengiriman selesai, menjadwalkan siklus berikutnya...',
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        # Schedule next cycle ONLY after current cycle completes
         settings = await db.settings.find_one({}) or AppSettings().dict()
         if settings.get("is_scheduler_active", False):
             min_interval = settings.get("min_cycle_interval", 60)
             max_interval = settings.get("max_cycle_interval", 120)
-            next_run = datetime.now() + timedelta(minutes=random.randint(min_interval, max_interval))
+            next_interval_minutes = random.randint(min_interval, max_interval)
+            next_run = datetime.now() + timedelta(minutes=next_interval_minutes)
             
             scheduler.add_job(
                 auto_sender_cycle,
@@ -896,9 +931,23 @@ async def auto_sender_cycle(session_id: str):
                 args=[session_id],
                 id=f"auto_sender_{session_id}"
             )
+            
+            await sio.emit('scheduler_status', {
+                'session_id': session_id,
+                'status': 'next_scheduled',
+                'message': f'Siklus berikutnya dijadwalkan dalam {next_interval_minutes} menit',
+                'next_run': next_run.isoformat(),
+                'timestamp': datetime.utcnow().isoformat()
+            })
     
     except Exception as e:
         logging.error(f"Error in auto sender cycle: {e}")
+        await sio.emit('scheduler_status', {
+            'session_id': session_id,
+            'status': 'error',
+            'message': f'Error dalam siklus: {str(e)}',
+            'timestamp': datetime.utcnow().isoformat()
+        })
 
 # Dashboard and Monitoring Routes
 
