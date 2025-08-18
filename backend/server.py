@@ -911,6 +911,7 @@ async def get_settings():
         # Create default settings
         settings = AppSettings()
         await db.settings.insert_one(settings.dict())
+        return settings
     return AppSettings(**settings)
 
 @api_router.put("/settings")
