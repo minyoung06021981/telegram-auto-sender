@@ -40,6 +40,7 @@ const LoginPage = () => {
         // Already authenticated
         setCurrentSession(response.data);
         setIsAuthenticated(true);
+        saveSessionToStorage(response.data);
         addNotification('Login berhasil!', 'success');
       } else {
         // Need verification
