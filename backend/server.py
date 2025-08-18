@@ -407,6 +407,8 @@ async def telegram_verify(verify_data: TelegramVerify):
             {
                 "$set": {
                     "phone_number": phone_number,
+                    "api_id": client.api_id,
+                    "api_hash": client.api_hash,
                     "encrypted_session": encrypted_session,
                     "user_info": {
                         "id": me.id,
