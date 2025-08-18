@@ -825,27 +825,14 @@ async def update_settings(settings_data: AppSettings):
 # Scheduler Routes
 
 @api_router.post("/scheduler/start")
-async def start_scheduler(session_id: str):
-    """Start automatic message scheduler"""
+async def start_scheduler(session_id: str, background_tasks: BackgroundTasks):
+    """Start automatic message scheduler with immediate first cycle"""
     settings = await db.settings.find_one({}) or AppSettings().dict()
     
     # Clear existing jobs for this session
     for job in scheduler.get_jobs():
         if job.id.startswith(f"auto_sender_{session_id}"):
             job.remove()
-    
-    # Schedule recurring job
-    min_interval = settings.get("min_cycle_interval", 60)
-    max_interval = settings.get("max_cycle_interval", 120)
-    next_run = datetime.now() + timedelta(minutes=random.randint(min_interval, max_interval))
-    
-    scheduler.add_job(
-        auto_sender_cycle,
-        "date",
-        run_date=next_run,
-        args=[session_id],
-        id=f"auto_sender_{session_id}"
-    )
     
     # Update settings
     await db.settings.update_one(
@@ -854,7 +841,10 @@ async def start_scheduler(session_id: str):
         upsert=True
     )
     
-    return {"message": "Scheduler started", "next_run": next_run.isoformat()}
+    # Start first cycle immediately in background
+    background_tasks.add_task(auto_sender_cycle, session_id)
+    
+    return {"message": "Scheduler started - first cycle running immediately", "immediate_execution": True}
 
 @api_router.post("/scheduler/stop")
 async def stop_scheduler(session_id: str):
