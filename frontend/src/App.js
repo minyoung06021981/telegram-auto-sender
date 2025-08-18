@@ -114,7 +114,9 @@ function App() {
     addNotification,
     theme,
     setTheme,
-    loadSessions
+    loadSessions,
+    saveSessionToStorage,
+    clearSessionFromStorage
   };
 
   return (
