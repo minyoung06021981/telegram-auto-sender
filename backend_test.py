@@ -701,10 +701,10 @@ class TelegramAutoSenderTester:
             self.log_test("Cleanup", False, f"Error during cleanup: {str(e)}")
     
     def run_all_tests(self):
-        """Run all backend API tests with focus on 2FA regression testing"""
-        print("🚀 TELEGRAM AUTO SENDER - 2FA REGRESSION TESTING")
+        """Run all backend API tests with focus on 2FA regression testing and new group management"""
+        print("🚀 TELEGRAM AUTO SENDER - COMPREHENSIVE BACKEND TESTING")
         print("=" * 60)
-        print("Focus: Testing all API endpoints after 2FA authentication fixes")
+        print("Focus: Testing all API endpoints including new group management features")
         print("=" * 60)
         
         # Test in order of priority for regression testing
@@ -713,6 +713,7 @@ class TelegramAutoSenderTester:
         self.test_settings_endpoints()
         self.test_template_endpoints()
         self.test_group_endpoints()
+        self.test_new_group_management_endpoints()  # NEW: Test updated group management
         self.test_dashboard_endpoints()
         self.test_scheduler_endpoints()
         self.test_message_endpoints()
