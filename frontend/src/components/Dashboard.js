@@ -185,7 +185,70 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Live Log Toggle */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+          Live Activity Log
+        </h2>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={clearLogs}
+            className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-sm transition-colors"
+          >
+            Clear
+          </button>
+          <button
+            onClick={() => setShowLogs(!showLogs)}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+          >
+            {showLogs ? 'Hide Logs' : 'Show Logs'}
+          </button>
+        </div>
+      </div>
+
+      {/* Live Log Panel */}
+      {showLogs && (
+        <div className="dashboard-card">
+          <div className="h-96 overflow-y-auto bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+            {logs.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                <p>No activity logs yet...</p>
+                <p className="text-xs mt-2">Logs will appear here when scheduler is running</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {logs.map((log) => (
+                  <div
+                    key={log.id}
+                    className={`flex items-start space-x-2 ${
+                      log.type === 'error' ? 'text-red-400' :
+                      log.type === 'warning' ? 'text-yellow-400' :
+                      log.type === 'success' ? 'text-green-400' :
+                      'text-blue-400'
+                    }`}
+                  >
+                    <span className="text-xs text-gray-500 min-w-[60px] mt-1">
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </span>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      log.type === 'error' ? 'bg-red-900 text-red-300' :
+                      log.type === 'warning' ? 'bg-yellow-900 text-yellow-300' :
+                      log.type === 'success' ? 'bg-green-900 text-green-300' :
+                      'bg-blue-900 text-blue-300'
+                    }`}>
+                      {log.status.toUpperCase()}
+                    </span>
+                    <span className="flex-1">{log.message}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="dashboard-card">
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
