@@ -3,7 +3,7 @@ import axios from 'axios';
 import { AppContext } from '../App';
 
 const LoginPage = () => {
-  const { API, setCurrentSession, setIsAuthenticated, sessions, loadSessions, addNotification } = useContext(AppContext);
+  const { API, setCurrentSession, setIsAuthenticated, sessions, loadSessions, addNotification, saveSessionToStorage, clearSessionFromStorage } = useContext(AppContext);
   
   const [step, setStep] = useState('select'); // select, new, verify
   const [loading, setLoading] = useState(false);
