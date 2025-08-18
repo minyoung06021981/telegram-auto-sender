@@ -108,8 +108,8 @@ class MessageTemplateCreate(BaseModel):
 
 class AppSettings(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    min_message_interval: int = 5  # seconds
-    max_message_interval: int = 15  # seconds
+    min_message_interval: int = 20  # seconds - Telethon recommended minimum
+    max_message_interval: int = 30  # seconds - Telethon recommended for avoiding FloodWaitError
     min_cycle_interval: int = 60  # minutes
     max_cycle_interval: int = 120  # minutes
     max_retry_attempts: int = 3
