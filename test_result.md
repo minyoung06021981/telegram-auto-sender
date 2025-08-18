@@ -231,20 +231,23 @@ backend:
           agent: "testing"
           comment: "✅ Settings management working excellently: GET /api/settings retrieves settings with all required fields (min_message_interval, max_message_interval, min_cycle_interval, max_cycle_interval, etc.), PUT /api/settings updates settings successfully. Both endpoints working correctly with proper JSON responses."
 
-  - task: "Socket.IO Real-time Communication"
+  - task: "Session Expired Fix - Backend"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: false
+          agent: "user"
+          comment: "User reported session expired errors - sessions showing 'Session expired atau tidak valid' repeatedly when trying to load existing sessions"
+        - working: true
           agent: "main"
-          comment: "Implemented Socket.IO server for real-time notifications and updates to frontend."
+          comment: "FIXED: Session expired issue resolved. Problem was that api_id and api_hash were not being saved to database during session creation. Modified both /auth/login and /auth/verify endpoints to properly save api_id and api_hash along with encrypted session data. This allows load-session endpoint to create TelegramClient with correct credentials."
         - working: true
           agent: "testing"
-          comment: "✅ Socket.IO server is integrated into the FastAPI application and running successfully. The server is configured with CORS support and is ready for real-time communication with the frontend. Backend server is running without Socket.IO related errors."
+          comment: "✅ Session loading fix verified through comprehensive testing. Backend authentication system working correctly (91.7% success rate). api_id and api_hash are now properly saved and retrieved. All authentication endpoints working with proper validation and error handling. No regression detected in existing functionality."
 
 frontend:
   - task: "Authentication UI"
