@@ -32,17 +32,79 @@ const GroupManager = () => {
   const handleAddGroup = async (e) => {
     e.preventDefault();
     
+    if (!newGroup.identifier.trim()) {
+      addNotification('Masukkan identifier grup', 'error');
+      return;
+    }
+    
     try {
-      await axios.post(`${API}/groups`, newGroup, {
+      await axios.post(`${API}/groups/single`, {
+        identifier: newGroup.identifier
+      }, {
         params: { session_id: currentSession.session_id }
       });
       
-      setNewGroup({ name: '', username: '', group_id: '', invite_link: '' });
+      setNewGroup({ identifier: '' });
       setShowAddModal(false);
       loadGroups();
       addNotification('Grup berhasil ditambahkan', 'success');
     } catch (error) {
       addNotification(error.response?.data?.detail || 'Gagal menambah grup', 'error');
+    }
+  };
+
+  const handleBulkAdd = async (e) => {
+    e.preventDefault();
+    
+    if (!bulkGroups.trim()) {
+      addNotification('Masukkan daftar grup', 'error');
+      return;
+    }
+    
+    const identifiers = bulkGroups.split('\n').map(line => line.trim()).filter(line => line);
+    
+    if (identifiers.length === 0) {
+      addNotification('Tidak ada grup yang valid untuk ditambahkan', 'error');
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API}/groups/bulk`, {
+        identifiers: identifiers
+      }, {
+        params: { session_id: currentSession.session_id }
+      });
+      
+      const results = response.data;
+      let message = '';
+      
+      if (results.added.length > 0) {
+        message += `${results.added.length} grup berhasil ditambahkan. `;
+      }
+      
+      if (results.skipped.length > 0) {
+        message += `${results.skipped.length} grup dilewati (sudah ada). `;
+      }
+      
+      if (results.errors.length > 0) {
+        message += `${results.errors.length} grup gagal ditambahkan.`;
+        
+        // Show first few errors
+        const errorDetails = results.errors.slice(0, 3).map(err => 
+          `${err.identifier}: ${err.error}`
+        ).join(', ');
+        
+        addNotification(`${message} Error: ${errorDetails}`, 'warning');
+      } else {
+        addNotification(message, 'success');
+      }
+      
+      setBulkGroups('');
+      setShowBulkModal(false);
+      loadGroups();
+      
+    } catch (error) {
+      addNotification(error.response?.data?.detail || 'Gagal menambah grup secara bulk', 'error');
     }
   };
 
