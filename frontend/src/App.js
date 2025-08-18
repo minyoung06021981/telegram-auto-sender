@@ -30,6 +30,9 @@ function App() {
     // Load saved sessions on startup
     loadSessions();
     
+    // Check for saved authentication state
+    checkSavedAuth();
+    
     // Initialize socket connection
     const socketConnection = io(BACKEND_URL, {
       transports: ['websocket', 'polling']
