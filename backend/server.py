@@ -332,6 +332,8 @@ async def telegram_login(auth_data: TelegramAuth):
             await db.sessions.insert_one({
                 "id": session_id,
                 "phone_number": auth_data.phone_number,
+                "api_id": auth_data.api_id,
+                "api_hash": auth_data.api_hash,
                 "encrypted_session": encrypted_session,
                 "user_info": {
                     "id": me.id,
