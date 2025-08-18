@@ -365,29 +365,45 @@ async def telegram_verify(verify_data: TelegramVerify):
         if not client:
             raise HTTPException(status_code=400, detail="Invalid session")
         
-        if verify_data.phone_code:
+        # Handle phone code verification
+        if verify_data.phone_code and not verify_data.password:
             try:
                 await client.sign_in(code=verify_data.phone_code)
+                # If we reach here, phone code was successful and no 2FA needed
             except SessionPasswordNeededError:
+                # 2FA password is required
                 return {
                     "session_id": verify_data.session_id,
                     "requires_password": True,
                     "authenticated": False
                 }
         
+        # Handle password verification (2FA)
         if verify_data.password:
-            await client.sign_in(password=verify_data.password)
+            try:
+                await client.sign_in(password=verify_data.password)
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Invalid 2FA password: {str(e)}")
         
+        # Verify client is now authenticated
+        if not await client.is_user_authorized():
+            raise HTTPException(status_code=400, detail="Authentication failed")
+            
         # Get user info and save session
         me = await client.get_me()
         session_string = client.session.save()
         
         # Encrypt and store session
         encrypted_session = encrypt_session(session_string)
+        
+        # Store session data with phone number
+        phone_number = getattr(verify_data, 'phone_number', 'unknown')
+        
         await db.sessions.update_one(
             {"id": verify_data.session_id},
             {
                 "$set": {
+                    "phone_number": phone_number,
                     "encrypted_session": encrypted_session,
                     "user_info": {
                         "id": me.id,
