@@ -289,7 +289,7 @@ frontend:
           agent: "main"
           comment: "Dashboard with statistics cards, scheduler controls, group overview, and quick actions. Needs backend connection testing."
 
-  - task: "Group Management UI"
+  - task: "Group Management UI Form Improvements"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/components/GroupManager.js"
@@ -297,9 +297,12 @@ frontend:
     priority: "high"
     needs_retesting: true
     status_history:
+        - working: false
+          agent: "user"
+          comment: "User requested form improvements: 1) Remove 'Nama Grup (Opsional)' field, 2) Combine Username/ID/Link into single field, 3) Add bulk add functionality for adding many groups at once"
         - working: "NA"
           agent: "main"
-          comment: "Group management interface with add/delete/filter functionality, status badges, and CSV import placeholder. Needs backend API testing."
+          comment: "IMPLEMENTED: Redesigned group add forms. Single add now uses one field for identifier (username/ID/link). Added new Bulk Add modal with textarea for adding multiple groups (one per line). Backend updated with /api/groups/single and /api/groups/bulk endpoints. UI simplified and user-friendly."
 
   - task: "Message Templates UI"
     implemented: true
