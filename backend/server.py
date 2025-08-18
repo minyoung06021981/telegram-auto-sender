@@ -509,20 +509,18 @@ async def delete_session(session_id: str):
 
 # Group Management Routes
 
-@api_router.post("/groups", response_model=Group)
-async def create_group(group_data: GroupCreate, session_id: str):
-    """Add new group"""
+@api_router.post("/groups/single", response_model=Group)
+async def create_single_group(group_data: GroupIdentifier, session_id: str):
+    """Add single group using identifier"""
     client = await get_active_client(session_id)
     if not client:
         raise HTTPException(status_code=401, detail="No active session")
     
-    # Determine group identifier
-    identifier = group_data.username or group_data.invite_link or group_data.group_id
-    if not identifier:
+    if not group_data.identifier.strip():
         raise HTTPException(status_code=400, detail="Group identifier required")
     
     # Validate group
-    validation = await validate_telegram_group(client, identifier)
+    validation = await validate_telegram_group(client, group_data.identifier.strip())
     if not validation["valid"]:
         raise HTTPException(status_code=400, detail=f"Invalid group: {validation['error']}")
     
@@ -533,14 +531,82 @@ async def create_group(group_data: GroupCreate, session_id: str):
     
     # Create group
     group = Group(
-        name=group_data.name or validation["title"],
+        name=validation["title"],
         username=validation.get("username"),
         group_id=validation["id"],
-        invite_link=group_data.invite_link
+        invite_link=group_data.identifier.strip() if group_data.identifier.startswith('https://t.me/+') else None
     )
     
+    # Insert to database
     await db.groups.insert_one(group.dict())
+    
     return group
+
+@api_router.post("/groups/bulk")
+async def create_bulk_groups(bulk_data: BulkGroupCreate, session_id: str):
+    """Add multiple groups from list of identifiers"""
+    client = await get_active_client(session_id)
+    if not client:
+        raise HTTPException(status_code=401, detail="No active session")
+    
+    if not bulk_data.identifiers:
+        raise HTTPException(status_code=400, detail="No identifiers provided")
+    
+    results = {
+        "added": [],
+        "skipped": [],
+        "errors": []
+    }
+    
+    for identifier in bulk_data.identifiers:
+        identifier = identifier.strip()
+        if not identifier:
+            continue
+            
+        try:
+            # Validate group
+            validation = await validate_telegram_group(client, identifier)
+            if not validation["valid"]:
+                results["errors"].append({
+                    "identifier": identifier,
+                    "error": validation["error"]
+                })
+                continue
+            
+            # Check if group already exists
+            existing = await db.groups.find_one({"group_id": validation["id"]})
+            if existing:
+                results["skipped"].append({
+                    "identifier": identifier,
+                    "name": validation["title"],
+                    "reason": "Already exists"
+                })
+                continue
+            
+            # Create group
+            group = Group(
+                name=validation["title"],
+                username=validation.get("username"),
+                group_id=validation["id"],
+                invite_link=identifier if identifier.startswith('https://t.me/+') else None
+            )
+            
+            # Insert to database
+            await db.groups.insert_one(group.dict())
+            
+            results["added"].append({
+                "identifier": identifier,
+                "name": validation["title"],
+                "group_id": validation["id"]
+            })
+            
+        except Exception as e:
+            results["errors"].append({
+                "identifier": identifier,
+                "error": str(e)
+            })
+    
+    return results
 
 @api_router.get("/groups", response_model=List[Group])
 async def get_groups():
