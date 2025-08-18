@@ -56,6 +56,27 @@ function App() {
     };
   }, []);
 
+  const checkSavedAuth = async () => {
+    try {
+      const savedSession = localStorage.getItem('currentSession');
+      if (savedSession) {
+        const sessionData = JSON.parse(savedSession);
+        
+        // Validate session is still valid by testing load-session endpoint
+        const response = await axios.post(`${API}/auth/load-session/${sessionData.session_id}`);
+        
+        if (response.data && response.data.authenticated) {
+          setCurrentSession(response.data);
+          setIsAuthenticated(true);
+          console.log('Auto-login successful with saved session');
+        }
+      }
+    } catch (error) {
+      console.log('Saved session is invalid or expired, clearing localStorage');
+      localStorage.removeItem('currentSession');
+    }
+  };
+
   const loadSessions = async () => {
     try {
       const response = await axios.get(`${API}/auth/sessions`);
@@ -63,6 +84,14 @@ function App() {
     } catch (error) {
       console.error('Error loading sessions:', error);
     }
+  };
+
+  const saveSessionToStorage = (sessionData) => {
+    localStorage.setItem('currentSession', JSON.stringify(sessionData));
+  };
+
+  const clearSessionFromStorage = () => {
+    localStorage.removeItem('currentSession');
   };
 
   const addNotification = (message, type = 'info') => {
