@@ -556,6 +556,27 @@ class TelegramAutoSenderTester:
         else:
             print("  None - All critical endpoints are working!")
         
+        print("\n✅ SESSION LOADING FIX STATUS:")
+        session_load_tests = [r for r in self.test_results if 'load-session' in r['test'].lower()]
+        session_load_passed = sum(1 for r in session_load_tests if r['success'])
+        
+        if session_load_tests:
+            print(f"  📊 Session Loading Tests: {session_load_passed}/{len(session_load_tests)} passed")
+            
+            # Check for specific "Session expired" errors
+            expired_errors = [r for r in session_load_tests if not r['success'] and 
+                            ('expired' in r['details'].lower() or 'tidak valid' in r['details'].lower())]
+            
+            if expired_errors:
+                print(f"  ❌ SESSION EXPIRED ERRORS STILL PRESENT: {len(expired_errors)} sessions affected")
+                for error in expired_errors:
+                    print(f"     - {error['test']}: {error['details']}")
+                print("  🔧 RECOMMENDATION: api_id and api_hash may not be properly saved during session creation")
+            else:
+                print("  ✅ NO SESSION EXPIRED ERRORS DETECTED - Fix appears successful!")
+        else:
+            print("  ⚠️  NO SESSION LOADING TESTS PERFORMED - No existing sessions found")
+        
         print("\n✅ 2FA REGRESSION STATUS:")
         if auth_passed == len(auth_tests) and len(critical_failures) == 0:
             print("  🎉 NO REGRESSION DETECTED - All systems operational after 2FA fixes!")
