@@ -75,6 +75,12 @@ class GroupCreate(BaseModel):
     group_id: Optional[str] = None
     invite_link: Optional[str] = None
 
+class GroupIdentifier(BaseModel):
+    identifier: str  # Can be username, group_id, or invite_link
+
+class BulkGroupCreate(BaseModel):
+    identifiers: List[str]  # List of username/group_id/invite_link, one per line
+
 class Group(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
