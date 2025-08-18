@@ -732,6 +732,107 @@ async def send_messages(job_data: SendMessageJob, session_id: str, background_ta
         }
         return {"message": "Messages scheduled", "job_id": job_id}
 
+async def send_messages_job_improved(session_id: str, group_ids: List[str], message: str):
+    """Improved background job to send messages with Telethon best practices"""
+    client = await get_active_client(session_id)
+    if not client:
+        return
+    
+    # Get app settings for delays
+    settings = await db.settings.find_one({}) or AppSettings().dict()
+    
+    results = []
+    total_groups = len(group_ids)
+    
+    for index, group_id in enumerate(group_ids):
+        current_progress = index + 1
+        
+        # Emit progress update
+        await sio.emit('sending_progress', {
+            'session_id': session_id,
+            'current': current_progress,
+            'total': total_groups,
+            'percentage': round((current_progress / total_groups) * 100, 1),
+            'current_group': group_id,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        # Check if group is available (not blacklisted)
+        available_groups = await get_available_groups(session_id)
+        if group_id not in available_groups:
+            results.append({
+                "group_id": group_id,
+                "success": False,
+                "error": "Group is blacklisted"
+            })
+            continue
+        
+        # Send message with retry logic and improved error handling
+        max_retries = settings.get("max_retry_attempts", 3)
+        for attempt in range(max_retries):
+            result = await send_message_to_group(client, group_id, message, session_id)
+            
+            if result["success"]:
+                results.append({
+                    "group_id": group_id,
+                    "success": True
+                })
+                break
+            elif result.get("error") in ["flood_wait", "slow_mode", "permanent_ban"]:
+                # Don't retry for these errors
+                results.append({
+                    "group_id": group_id,
+                    "success": False,
+                    "error": result["error"]
+                })
+                break
+            elif attempt < max_retries - 1:
+                # Retry with exponential backoff for other errors
+                wait_time = (2 ** attempt) * 5
+                await asyncio.sleep(wait_time)
+            else:
+                # Final attempt failed
+                results.append({
+                    "group_id": group_id,
+                    "success": False,
+                    "error": result.get("error", "unknown")
+                })
+        
+        # Telethon recommended delay: 20-30 seconds between messages to avoid FloodWaitError
+        # This is more conservative but safer based on Telethon documentation
+        if index < total_groups - 1:  # Not the last group
+            # Use longer delays based on Telethon best practices
+            delay = random.randint(
+                max(20, settings.get("min_message_interval", 20)),  # Minimum 20 seconds
+                max(30, settings.get("max_message_interval", 30))   # Maximum 30 seconds
+            )
+            
+            # Emit delay notification
+            await sio.emit('sending_delay', {
+                'session_id': session_id,
+                'delay_seconds': delay,
+                'message': f'Menunggu {delay} detik sebelum mengirim ke grup berikutnya...',
+                'timestamp': datetime.utcnow().isoformat()
+            })
+            
+            await asyncio.sleep(delay)
+    
+    # Emit final results via Socket.IO
+    successful_sends = len([r for r in results if r["success"]])
+    failed_sends = len([r for r in results if not r["success"]])
+    
+    await sio.emit('message_results', {
+        'session_id': session_id,
+        'results': results,
+        'summary': {
+            'total': total_groups,
+            'successful': successful_sends,
+            'failed': failed_sends,
+            'success_rate': round((successful_sends / total_groups) * 100, 1) if total_groups > 0 else 0
+        },
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
 async def send_messages_job(session_id: str, group_ids: List[str], message: str):
     """Background job to send messages"""
     client = await get_active_client(session_id)
