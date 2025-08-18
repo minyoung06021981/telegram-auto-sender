@@ -26,7 +26,7 @@ Aplikasi fullstack untuk mengirim pesan Telegram secara otomatis ke multiple gro
 
 ## 🚀 Cara Menggunakan
 
-1. **Buka aplikasi**: https://schedule-trigger.preview.emergentagent.com
+1. **Buka aplikasi**: https://auto-telegram.preview.emergentagent.com
 
 2. **Dapatkan API Credentials**:
    - Kunjungi: https://my.telegram.org/apps
