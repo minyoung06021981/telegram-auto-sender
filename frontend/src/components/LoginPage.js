@@ -102,9 +102,11 @@ const LoginPage = () => {
       const response = await axios.post(`${API}/auth/load-session/${sessionId}`);
       setCurrentSession(response.data);
       setIsAuthenticated(true);
+      saveSessionToStorage(response.data);
       addNotification('Session dimuat berhasil!', 'success');
     } catch (error) {
       addNotification('Session expired atau tidak valid', 'error');
+      clearSessionFromStorage();
     }
     
     setLoading(false);
