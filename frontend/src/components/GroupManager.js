@@ -164,52 +164,20 @@ const GroupManager = () => {
 
         <form onSubmit={handleAddGroup} className="space-y-4">
           <div>
-            <label className="form-label">Nama Grup (Opsional)</label>
+            <label className="form-label">Username Grup / ID Grup / Link Undangan</label>
             <input
               type="text"
-              value={newGroup.name}
-              onChange={e => setNewGroup({...newGroup, name: e.target.value})}
+              value={newGroup.identifier}
+              onChange={e => setNewGroup({...newGroup, identifier: e.target.value})}
               className="form-input"
-              placeholder="Nama untuk identifikasi"
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Username Grup</label>
-            <input
-              type="text"
-              value={newGroup.username}
-              onChange={e => setNewGroup({...newGroup, username: e.target.value})}
-              className="form-input"
-              placeholder="@namagroup atau https://t.me/namagroup"
-            />
-          </div>
-
-          <div>
-            <label className="form-label">ID Grup</label>
-            <input
-              type="text"
-              value={newGroup.group_id}
-              onChange={e => setNewGroup({...newGroup, group_id: e.target.value})}
-              className="form-input"
-              placeholder="-1001234567890"
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Link Undangan</label>
-            <input
-              type="text"
-              value={newGroup.invite_link}
-              onChange={e => setNewGroup({...newGroup, invite_link: e.target.value})}
-              className="form-input"
-              placeholder="https://t.me/+xxxxxxxxxxxxx"
+              placeholder="@namagroup atau -1001234567890 atau https://t.me/+xxxxxxxxxxxxx"
+              required
             />
           </div>
 
           <div className="bg-blue-50 p-3 rounded-lg">
             <p className="text-sm text-blue-700">
-              <strong>Tips:</strong> Isi salah satu dari: Username, ID Grup, atau Link Undangan. 
+              <strong>Tips:</strong> Masukkan salah satu dari: Username grup (@namagroup), ID Grup (-1001234567890), atau Link Undangan (https://t.me/+xxxxx). 
               Aplikasi akan memvalidasi grup sebelum menambahkan.
             </p>
           </div>
@@ -221,6 +189,61 @@ const GroupManager = () => {
             <button
               type="button"
               onClick={() => setShowAddModal(false)}
+              className="btn-secondary"
+            >
+              Batal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+
+  const BulkAddModal = () => (
+    <div className="modal-overlay" onClick={() => setShowBulkModal(false)}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold">Tambah Banyak Grup Sekaligus</h2>
+          <button
+            onClick={() => setShowBulkModal(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleBulkAdd} className="space-y-4">
+          <div>
+            <label className="form-label">Daftar Grup (Satu Baris Satu Grup)</label>
+            <textarea
+              value={bulkGroups}
+              onChange={e => setBulkGroups(e.target.value)}
+              className="form-input h-40"
+              placeholder={`@grup1
+-1001234567890
+https://t.me/+xxxxxxxxxxxxx
+@grup2
+-1005678901234`}
+              required
+            />
+          </div>
+
+          <div className="bg-green-50 p-3 rounded-lg">
+            <p className="text-sm text-green-700">
+              <strong>Format:</strong> Masukkan satu identifier per baris. Bisa kombinasi username (@namagroup), ID Grup (-1001234567890), 
+              atau Link Undangan (https://t.me/+xxxxx). Aplikasi akan memproses semua dan memberikan laporan hasilnya.
+            </p>
+          </div>
+
+          <div className="flex space-x-3 pt-4">
+            <button type="submit" className="btn-primary flex-1">
+              Tambah Semua Grup
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowBulkModal(false)}
               className="btn-secondary"
             >
               Batal
