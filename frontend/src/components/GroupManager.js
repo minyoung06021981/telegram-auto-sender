@@ -7,13 +7,11 @@ const GroupManager = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showImportModal, setShowImportModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const [newGroup, setNewGroup] = useState({
-    name: '',
-    username: '',
-    group_id: '',
-    invite_link: ''
+    identifier: ''
   });
+  const [bulkGroups, setBulkGroups] = useState('');
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
