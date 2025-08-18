@@ -264,24 +264,35 @@ const LoginPage = () => {
           <form onSubmit={handleVerification} className="space-y-4">
             <div className="text-center mb-4">
               <h3 className="text-lg font-semibold">Verifikasi</h3>
-              <p className="text-gray-600">
-                Kode verifikasi telah dikirim ke {formData.phone_number}
-              </p>
+              {!sessionData?.requires_password ? (
+                <p className="text-gray-600">
+                  Kode verifikasi telah dikirim ke {formData.phone_number}
+                </p>
+              ) : (
+                <p className="text-gray-600">
+                  Masukkan password 2FA untuk menyelesaikan login
+                </p>
+              )}
             </div>
 
-            <div>
-              <label className="form-label">Kode Verifikasi</label>
-              <input
-                type="text"
-                name="phone_code"
-                value={formData.phone_code}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="12345"
-                maxLength="5"
-                required={!sessionData?.requires_password}
-              />
-            </div>
+            {!sessionData?.requires_password && (
+              <div>
+                <label className="form-label">Kode Verifikasi</label>
+                <input
+                  type="text"
+                  name="phone_code"
+                  value={formData.phone_code}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="12345"
+                  maxLength="5"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Masukkan 5 digit kode yang dikirim ke Telegram
+                </p>
+              </div>
+            )}
 
             {sessionData?.requires_password && (
               <div>
@@ -295,6 +306,9 @@ const LoginPage = () => {
                   placeholder="Password 2FA Anda"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Masukkan password dua faktor yang Anda set di Telegram
+                </p>
               </div>
             )}
 
@@ -304,16 +318,29 @@ const LoginPage = () => {
               className="btn-primary w-full"
             >
               {loading ? (
-                <div className="loading-spinner"></div>
+                <div className="flex items-center justify-center">
+                  <div className="loading-spinner mr-2"></div>
+                  Memverifikasi...
+                </div>
               ) : (
-                'Verifikasi'
+                sessionData?.requires_password ? 'Masuk dengan 2FA' : 'Verifikasi Kode'
               )}
             </button>
 
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => setStep('new')}
+                onClick={() => {
+                  setStep('new');
+                  setSessionData(null);
+                  setFormData({
+                    api_id: '',
+                    api_hash: '',
+                    phone_number: '',
+                    phone_code: '',
+                    password: ''
+                  });
+                }}
                 className="text-gray-500 hover:text-gray-600"
               >
                 Kembali
