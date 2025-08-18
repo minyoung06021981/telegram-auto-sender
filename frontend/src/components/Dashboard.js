@@ -12,7 +12,87 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+    
+    // Listen for real-time scheduler updates
+    if (socket) {
+      socket.on('scheduler_status', (data) => {
+        console.log('Scheduler status update:', data);
+        addLogEntry(data);
+      });
+
+      socket.on('sending_progress', (data) => {
+        console.log('Sending progress:', data);
+        addLogEntry({
+          status: 'sending_progress',
+          message: `Progress: ${data.current}/${data.total} groups`,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      socket.on('sending_delay', (data) => {
+        console.log('Sending delay:', data);
+        addLogEntry({
+          status: 'delay',
+          message: `Waiting ${data.delay} seconds before next message...`,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      socket.on('message_results', (data) => {
+        console.log('Message results:', data);
+        addLogEntry({
+          status: 'results',
+          message: `Batch completed: ${data.summary.successful}/${data.summary.total} successful (${data.summary.success_rate}%)`,
+          timestamp: data.timestamp
+        });
+      });
+
+      return () => {
+        socket.off('scheduler_status');
+        socket.off('sending_progress');
+        socket.off('sending_delay');
+        socket.off('message_results');
+      };
+    }
+  }, [socket]);
+
+  const addLogEntry = (logData) => {
+    const logEntry = {
+      id: Date.now() + Math.random(),
+      timestamp: logData.timestamp || new Date().toISOString(),
+      status: logData.status,
+      message: logData.message,
+      type: getLogType(logData.status)
+    };
+
+    setLogs(prev => {
+      const newLogs = [logEntry, ...prev];
+      // Keep only last 50 entries
+      return newLogs.slice(0, 50);
+    });
+  };
+
+  const getLogType = (status) => {
+    switch (status) {
+      case 'cycle_started':
+      case 'sending_messages':
+        return 'info';
+      case 'cycle_completed':
+      case 'next_scheduled':
+        return 'success';
+      case 'no_template':
+      case 'no_groups':
+        return 'warning';
+      case 'error':
+        return 'error';
+      default:
+        return 'info';
+    }
+  };
+
+  const clearLogs = () => {
+    setLogs([]);
+  };
 
   const loadDashboardData = async () => {
     setLoading(true);
