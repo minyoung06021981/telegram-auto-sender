@@ -24,6 +24,7 @@ python-multipart>=0.0.9
 jq>=1.6.0
 typer>=0.9.0
 telethon==1.36.0
+pyaes>=1.6.1
 asyncio-mqtt>=0.16.2
 apscheduler>=3.10.4
 redis>=5.0.1
