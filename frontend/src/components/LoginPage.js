@@ -58,7 +58,8 @@ const LoginPage = () => {
     
     try {
       const requestData = {
-        session_id: sessionData.session_id
+        session_id: sessionData.session_id,
+        phone_number: formData.phone_number
       };
       
       // Add phone_code if provided and not requires_password yet
