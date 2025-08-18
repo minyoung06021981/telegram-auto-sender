@@ -82,6 +82,7 @@ const LoginPage = () => {
       } else if (response.data.authenticated) {
         setCurrentSession(response.data);
         setIsAuthenticated(true);
+        saveSessionToStorage(response.data);
         addNotification('Login berhasil!', 'success');
         loadSessions(); // Refresh sessions list
       }
