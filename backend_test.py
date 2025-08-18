@@ -65,22 +65,117 @@ class TelegramAutoSenderTester:
             self.log_test("Health Check", False, f"Connection error: {str(e)}")
     
     def test_auth_endpoints_comprehensive(self):
-        """Comprehensive test of authentication endpoints - Focus area for 2FA regression testing"""
-        print("\n🔐 TESTING AUTHENTICATION ENDPOINTS (2FA REGRESSION FOCUS)")
+        """Comprehensive test of authentication endpoints - Focus on session loading and api_id/api_hash saving"""
+        print("\n🔐 TESTING AUTHENTICATION ENDPOINTS (SESSION LOADING FOCUS)")
         print("-" * 50)
         
         # Test 1: GET sessions endpoint
+        existing_sessions = []
         try:
             response = self.session.get(f"{BASE_URL}/auth/sessions")
             if response.status_code == 200:
                 sessions = response.json()
+                existing_sessions = sessions
                 self.log_test("GET /api/auth/sessions", True, f"Retrieved {len(sessions)} sessions", sessions)
+                
+                # Check if sessions have required fields including api_id and api_hash info
+                for session in sessions:
+                    if 'session_id' in session and 'phone_number' in session:
+                        self.log_test("Session Structure Validation", True, f"Session {session['session_id']} has required fields")
+                    else:
+                        self.log_test("Session Structure Validation", False, f"Session missing required fields: {session}")
             else:
                 self.log_test("GET /api/auth/sessions", False, f"HTTP {response.status_code}: {response.text}")
         except Exception as e:
             self.log_test("GET /api/auth/sessions", False, f"Error: {str(e)}")
         
-        # Test 2: POST login with invalid credentials (should return proper error)
+        # Test 2: Test load-session endpoint with existing sessions (MAIN FOCUS)
+        if existing_sessions:
+            print("\n🎯 TESTING SESSION LOADING (MAIN FOCUS - Session Expired Fix)")
+            print("-" * 50)
+            
+            for session in existing_sessions[:3]:  # Test up to 3 existing sessions
+                session_id = session.get('session_id')
+                phone_number = session.get('phone_number', 'unknown')
+                
+                try:
+                    load_response = self.session.post(f"{BASE_URL}/auth/load-session/{session_id}")
+                    
+                    if load_response.status_code == 200:
+                        load_data = load_response.json()
+                        self.log_test(f"POST /api/auth/load-session/{session_id}", True, 
+                                    f"Session loaded successfully for {phone_number}", load_data)
+                        
+                        # Verify the response contains expected fields
+                        if 'authenticated' in load_data and 'user_info' in load_data:
+                            self.log_test(f"Session Load Response Validation ({session_id})", True, 
+                                        "Response contains required authentication fields")
+                        else:
+                            self.log_test(f"Session Load Response Validation ({session_id})", False, 
+                                        f"Response missing required fields: {load_data}")
+                    
+                    elif load_response.status_code == 401:
+                        # This is the error we're trying to fix - "Session expired"
+                        try:
+                            error_data = load_response.json()
+                            error_detail = error_data.get('detail', 'No detail')
+                            if 'expired' in error_detail.lower() or 'tidak valid' in error_detail.lower():
+                                self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                            f"❌ SESSION EXPIRED ERROR STILL PRESENT: {error_detail} (Phone: {phone_number})")
+                            else:
+                                self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                            f"Authentication failed: {error_detail} (Phone: {phone_number})")
+                        except:
+                            self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                        f"❌ SESSION EXPIRED ERROR: HTTP 401 - {load_response.text} (Phone: {phone_number})")
+                    
+                    elif load_response.status_code == 404:
+                        self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                    f"Session not found in database (Phone: {phone_number})")
+                    
+                    elif load_response.status_code == 400:
+                        try:
+                            error_data = load_response.json()
+                            error_detail = error_data.get('detail', 'No detail')
+                            self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                        f"Bad request: {error_detail} (Phone: {phone_number})")
+                        except:
+                            self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                        f"Bad request: {load_response.text} (Phone: {phone_number})")
+                    
+                    else:
+                        self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                    f"Unexpected HTTP {load_response.status_code}: {load_response.text} (Phone: {phone_number})")
+                        
+                except Exception as e:
+                    self.log_test(f"POST /api/auth/load-session/{session_id}", False, 
+                                f"Error loading session: {str(e)} (Phone: {phone_number})")
+        else:
+            self.log_test("Session Loading Test", False, "No existing sessions found to test load functionality")
+        
+        # Test 3: Test load-session with invalid session_id
+        try:
+            invalid_session_id = "invalid_session_12345"
+            load_response = self.session.post(f"{BASE_URL}/auth/load-session/{invalid_session_id}")
+            
+            if load_response.status_code == 404:
+                self.log_test("POST /api/auth/load-session (Invalid ID)", True, 
+                            "Proper error handling for invalid session ID - HTTP 404")
+            elif load_response.status_code == 400:
+                try:
+                    error_data = load_response.json()
+                    self.log_test("POST /api/auth/load-session (Invalid ID)", True, 
+                                f"Proper error handling - HTTP 400: {error_data.get('detail', 'No detail')}")
+                except:
+                    self.log_test("POST /api/auth/load-session (Invalid ID)", True, 
+                                f"Proper error handling - HTTP 400: {load_response.text}")
+            else:
+                self.log_test("POST /api/auth/load-session (Invalid ID)", False, 
+                            f"Expected HTTP 404 or 400, got HTTP {load_response.status_code}: {load_response.text}")
+        except Exception as e:
+            self.log_test("POST /api/auth/load-session (Invalid ID)", False, f"Error: {str(e)}")
+        
+        # Test 4: POST login with invalid credentials (should return proper error)
         try:
             login_data = {
                 "api_id": 12345,
@@ -104,7 +199,7 @@ class TelegramAutoSenderTester:
         except Exception as e:
             self.log_test("POST /api/auth/login (Invalid Credentials)", False, f"Error: {str(e)}")
         
-        # Test 3: POST verify with invalid session_id (should return proper error)
+        # Test 5: POST verify with invalid session_id (should return proper error)
         try:
             verify_data = {
                 "session_id": "invalid_session_id_12345",
@@ -127,7 +222,7 @@ class TelegramAutoSenderTester:
         except Exception as e:
             self.log_test("POST /api/auth/verify (Invalid Session)", False, f"Error: {str(e)}")
         
-        # Test 4: POST verify with missing parameters (should return validation error)
+        # Test 6: POST verify with missing parameters (should return validation error)
         try:
             # Missing session_id
             verify_data_missing = {
@@ -150,7 +245,7 @@ class TelegramAutoSenderTester:
         except Exception as e:
             self.log_test("POST /api/auth/verify (Missing Parameters)", False, f"Error: {str(e)}")
         
-        # Test 5: Test 2FA password flow validation
+        # Test 7: Test 2FA password flow validation
         try:
             verify_2fa_data = {
                 "session_id": "test_session_id",
