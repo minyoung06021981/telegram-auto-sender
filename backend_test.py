@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Comprehensive Backend API Tests for Telegram Auto Sender
-Focus on regression testing after 2FA authentication fixes
+Focus on User Authentication and Subscription System Testing
 """
 
 import requests
@@ -26,6 +26,14 @@ class TelegramAutoSenderTester:
         self.session_id = None
         self.template_id = None
         self.group_id = None
+        self.access_token = None
+        self.user_id = None
+        self.test_user_data = {
+            'username': f'testuser_{uuid.uuid4().hex[:8]}',
+            'email': f'test_{uuid.uuid4().hex[:8]}@example.com',
+            'password': 'SecureTestPass123!',
+            'full_name': 'Test User Authentication'
+        }
         
     def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
         """Log test results"""
