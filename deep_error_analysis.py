@@ -8,7 +8,7 @@ import json
 import time
 from datetime import datetime
 
-BASE_URL = "https://tele-auto-sender.preview.emergentagent.com/api"
+BASE_URL = "https://telegram-sender-3.preview.emergentagent.com/api"
 
 class DeepErrorAnalyzer:
     def __init__(self):

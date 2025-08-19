@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration - Using the correct URL from frontend/.env
-BASE_URL = "https://tele-auto-sender.preview.emergentagent.com/api"
-HEALTH_URL = "https://tele-auto-sender.preview.emergentagent.com"
+BASE_URL = "https://telegram-sender-3.preview.emergentagent.com/api"
+HEALTH_URL = "https://telegram-sender-3.preview.emergentagent.com"
 
 class TelegramAutoSenderTester:
     def __init__(self):

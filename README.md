@@ -29,7 +29,7 @@ Aplikasi fullstack untuk mengirim pesan Telegram secara otomatis ke multiple gro
 ## 🚀 Cara Menggunakan
 
 ### 1. **Akses Aplikasi**
-- Buka: https://tele-auto-sender.preview.emergentagent.com
+- Buka: https://telegram-sender-3.preview.emergentagent.com
 - Aplikasi akan otomatis login jika session masih valid
 
 ### 2. **Dapatkan API Credentials**
