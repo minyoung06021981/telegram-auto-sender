@@ -29,7 +29,7 @@ backend/
 
 ### **Frontend: React + TypeScript + Modern State Management**
 ```
-frontend_new/
+frontend/
 ├── package.json           # Dependencies & scripts
 ├── tsconfig.json         # TypeScript configuration
 ├── vite.config.ts        # Vite configuration
