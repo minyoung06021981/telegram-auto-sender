@@ -167,6 +167,39 @@
 }
 
 .stat-card.purple {
+/* Form Styles - Modern Telegram */
+.form-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(42, 171, 238, 0.15);
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--telegram-blue);
+  box-shadow: 
+    0 0 0 4px rgba(42, 171, 238, 0.1),
+    0 4px 16px rgba(42, 171, 238, 0.15);
+  transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+  color: var(--telegram-text-secondary);
+  opacity: 0.7;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--telegram-text);
+  font-size: 0.95rem;
+}
   background: linear-gradient(135deg, #8E44AD 0%, #BB6BD9 100%);
 }
 
