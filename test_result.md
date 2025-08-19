@@ -206,6 +206,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ IMPROVED SCHEDULER SYSTEM FULLY TESTED: Comprehensive testing of enhanced scheduler with Telethon best practices completed with 86.7% success rate (13/15 tests passed). ✅ IMMEDIATE EXECUTION VERIFIED: POST /api/scheduler/start now returns 'immediate_execution': true and triggers first cycle immediately as requested. ✅ TELETHON BEST PRACTICES IMPLEMENTED: Default message intervals updated to 20-30 seconds (min_message_interval: 20, max_message_interval: 30) following Telethon documentation to avoid FloodWaitError. ✅ SETTINGS VALIDATION PASSED: All required settings fields present with correct Telethon-recommended values. ✅ DASHBOARD INTEGRATION: Scheduler status properly tracked in dashboard stats. ✅ IMPROVED MESSAGE SENDING: send_messages_job_improved function implemented with proper 20-30 second delays and Socket.IO progress updates. Minor: Socket.IO real-time events need verification in production environment but endpoint structure is correct."
+        - working: false
+          agent: "testing"
+          comment: "🚨 CRITICAL SECURITY ISSUE FOUND: Authentication bypass vulnerability in scheduler endpoints. Both POST /api/scheduler/start and POST /api/scheduler/stop accept invalid session_id parameters and execute successfully without proper session validation. This allows unauthorized users to start/stop the scheduler system. The endpoints are missing the get_active_client() authentication check that other protected endpoints have. IMMEDIATE FIX REQUIRED: Add session validation using get_active_client(session_id) before allowing scheduler operations."
 
   - task: "Dashboard and Monitoring APIs"
     implemented: true
