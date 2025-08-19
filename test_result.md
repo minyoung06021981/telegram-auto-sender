@@ -402,11 +402,11 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Session Expired Fix - Backend"
+    - "Comprehensive Production Readiness Verification"
   stuck_tasks: 
     []
-  test_all: false
-  test_priority: "high_first"
+  test_all: true
+  test_priority: "production_ready"
 
 agent_communication:
     - agent: "main"
