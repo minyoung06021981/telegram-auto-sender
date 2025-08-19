@@ -239,6 +239,21 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ Settings management working excellently: GET /api/settings retrieves settings with all required fields (min_message_interval, max_message_interval, min_cycle_interval, max_cycle_interval, etc.), PUT /api/settings updates settings successfully. Both endpoints working correctly with proper JSON responses."
+        - working: false
+          agent: "testing"
+          comment: "🚨 VALIDATION ISSUES FOUND: Settings endpoint accepts invalid data - negative intervals (min_message_interval: -10, max_message_interval: -5) and illogical configurations (min_interval > max_interval). Template endpoint accepts empty names and whitespace-only names. These validation bypasses could cause system instability and poor user experience. FIXES NEEDED: Add proper input validation for all settings fields and template fields."
+
+  - task: "Input Validation & Security"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "🚨 MULTIPLE VALIDATION & SECURITY ISSUES IDENTIFIED: 1) Template creation accepts empty/whitespace names, 2) Settings accepts negative intervals and illogical min>max configurations, 3) No rate limiting protection (50 rapid requests succeeded), 4) Authentication bypass in scheduler endpoints allowing unauthorized access. These issues range from medium to high severity and need immediate attention for production security."
 
   - task: "Session Expired Fix - Backend"
     implemented: true
