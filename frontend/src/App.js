@@ -34,12 +34,43 @@ function App() {
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    // Load saved sessions on startup
-    loadSessions();
-    
-    // Check for saved authentication state
-    checkSavedAuth();
-    
+    // Check for user authentication first
+    checkUserAuth();
+  }, []);
+  
+  useEffect(() => {
+    // Only initialize telegram features if user is authenticated
+    if (isUserAuthenticated) {
+      loadSessions();
+      checkSavedAuth();
+      initializeSocket();
+    }
+  }, [isUserAuthenticated]);
+
+  const checkUserAuth = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const savedUser = localStorage.getItem('userData');
+      
+      if (token && savedUser) {
+        // Verify token with backend
+        const response = await axios.get(`${API}/users/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        setCurrentUser(response.data);
+        setIsUserAuthenticated(true);
+      }
+    } catch (error) {
+      // Token is invalid, clear storage
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('userData');
+      setIsUserAuthenticated(false);
+      setCurrentUser(null);
+    }
+  };
+
+  const initializeSocket = () => {
     // Initialize socket connection
     const socketConnection = io(BACKEND_URL, {
       transports: ['websocket', 'polling']
@@ -61,7 +92,7 @@ function App() {
     return () => {
       socketConnection.disconnect();
     };
-  }, []);
+  };
 
   const checkSavedAuth = async () => {
     try {
