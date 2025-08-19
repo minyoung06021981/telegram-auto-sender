@@ -252,7 +252,7 @@ export const useAuthStore = create<AuthStore>()(
 
 ### **Backend Development:**
 ```bash
-cd backend_new
+cd backend
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your configuration
