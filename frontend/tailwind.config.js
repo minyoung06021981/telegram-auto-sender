@@ -52,17 +52,17 @@ module.exports = {
                                 '3': 'hsl(var(--chart-3))',
                                 '4': 'hsl(var(--chart-4))',
                                 '5': 'hsl(var(--chart-5))'
-                        }
+                        },
+                        'telegram-blue': '#2AABEE',
+                        'telegram-blue-dark': '#229ED9',
+                        'telegram-blue-light': '#64B5F6',
+                        'telegram-accent': '#40A7E3',
+                        'telegram-bg': '#FAFAFA',
+                        'telegram-surface': '#FFFFFF',
+                        'telegram-success': '#00C851',
+                        'telegram-warning': '#FF8800',
+                        'telegram-error': '#FF3838'
                 },
-                'telegram-blue': '#2AABEE',
-                'telegram-blue-dark': '#229ED9',
-                'telegram-blue-light': '#64B5F6',
-                'telegram-accent': '#40A7E3',
-                'telegram-bg': '#FAFAFA',
-                'telegram-surface': '#FFFFFF',
-                'telegram-success': '#00C851',
-                'telegram-warning': '#FF8800',
-                'telegram-error': '#FF3838',
                 keyframes: {
                         'accordion-down': {
                                 from: {
