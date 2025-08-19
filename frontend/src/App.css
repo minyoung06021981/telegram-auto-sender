@@ -167,38 +167,101 @@
 }
 
 .stat-card.purple {
-/* Form Styles - Modern Telegram */
+/* Form Styles - Modern Telegram - ENHANCED */
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  position: relative;
+  padding-left: 0.25rem;
+}
+
+.form-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(135deg, var(--telegram-blue), var(--telegram-accent));
+  border-radius: 2px;
+}
+
 .form-input {
   width: 100%;
-  padding: 1rem 1.25rem;
-  border: 2px solid rgba(42, 171, 238, 0.15);
+  padding: 1.125rem 1.5rem;
+  border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 1rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.form-input:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--telegram-blue);
   box-shadow: 
-    0 0 0 4px rgba(42, 171, 238, 0.1),
-    0 4px 16px rgba(42, 171, 238, 0.15);
-  transform: translateY(-2px);
+    0 0 0 3px rgba(42, 171, 238, 0.1),
+    0 4px 12px rgba(42, 171, 238, 0.15);
+  background: #ffffff;
+  color: #1f2937;
 }
 
 .form-input::placeholder {
-  color: var(--telegram-text-secondary);
-  opacity: 0.7;
+  color: #9ca3af;
+  opacity: 1;
+  font-weight: 400;
 }
 
-.form-label {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-  color: var(--telegram-text);
-  font-size: 0.95rem;
+.form-input:focus::placeholder {
+  color: #d1d5db;
+}
+
+/* Textarea specific styling */
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+/* Input field container for better spacing */
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+/* Input with icons */
+.form-input-icon {
+  position: relative;
+}
+
+.form-input-icon .form-input {
+  padding-left: 3rem;
+}
+
+.form-input-icon .icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.form-input-icon .form-input:focus + .icon {
+  color: var(--telegram-blue);
 }
   background: linear-gradient(135deg, #8E44AD 0%, #BB6BD9 100%);
 }
