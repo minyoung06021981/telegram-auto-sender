@@ -193,6 +193,67 @@ class SendMessageJob(BaseModel):
     send_immediately: bool = False
 
 # Helper Functions
+def hash_password(password: str) -> str:
+    """Hash password using SHA-256 with salt"""
+    salt = secrets.token_hex(32)
+    pwd_hash = hashlib.sha256(f"{password}{salt}".encode()).hexdigest()
+    return f"{salt}${pwd_hash}"
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verify password against hash"""
+    try:
+        salt, stored_hash = password_hash.split('$')
+        pwd_hash = hashlib.sha256(f"{password}{salt}".encode()).hexdigest()
+        return pwd_hash == stored_hash
+    except:
+        return False
+
+def create_access_token(user_id: str, username: str) -> str:
+    """Create JWT access token"""
+    payload = {
+        "user_id": user_id,
+        "username": username,
+        "exp": datetime.utcnow() + timedelta(days=7),
+        "iat": datetime.utcnow()
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+def verify_token(token: str) -> Optional[Dict[str, Any]]:
+    """Verify JWT token"""
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        return None
+    except jwt.InvalidTokenError:
+        return None
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer())) -> Dict[str, Any]:
+    """Get current user from JWT token"""
+    payload = verify_token(credentials.credentials)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    user = await db.users.find_one({"id": payload["user_id"]})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=401, detail="User account is disabled")
+    
+    return user
+
+async def check_subscription(user: Dict[str, Any]) -> bool:
+    """Check if user has active subscription"""
+    if user.get("subscription_type") == "free":
+        return True  # Free tier always allowed
+    
+    expires = user.get("subscription_expires")
+    if expires and isinstance(expires, datetime):
+        return expires > datetime.utcnow()
+    
+    return False
+
 def encrypt_session(session_string: str) -> str:
     """Encrypt session string for secure storage"""
     return cipher_suite.encrypt(session_string.encode()).decode()
