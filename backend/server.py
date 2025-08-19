@@ -64,6 +64,7 @@ security = HTTPBearer()
 # Global variables for active sessions
 active_sessions = {}
 message_jobs = {}
+session_user_map = {}  # Track which user owns each session
 
 # Pydantic Models
 class TelegramAuth(BaseModel):
