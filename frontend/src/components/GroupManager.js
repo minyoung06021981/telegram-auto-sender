@@ -219,8 +219,8 @@ const GroupManager = () => {
           </button>
         </div>
 
-        <form onSubmit={handleBulkAdd} className="space-y-4">
-          <div>
+        <form onSubmit={handleBulkAdd} className="space-y-6">
+          <div className="form-field">
             <label className="form-label">Daftar Grup (Satu Baris Satu Grup)</label>
             <textarea
               value={bulkGroups}
@@ -235,7 +235,7 @@ https://t.me/+xxxxxxxxxxxxx
             />
           </div>
 
-          <div className="bg-green-50 p-3 rounded-lg">
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
             <p className="text-sm text-green-700">
               <strong>Format:</strong> Masukkan satu identifier per baris. Bisa kombinasi username (@namagroup), ID Grup (-1001234567890), 
               atau Link Undangan (https://t.me/+xxxxx). Aplikasi akan memproses semua dan memberikan laporan hasilnya.
