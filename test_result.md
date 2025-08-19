@@ -392,8 +392,13 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus: 
+    - "Scheduler System"
+    - "Input Validation & Security"
+    - "Settings Management API"
+  stuck_tasks: 
+    - "Scheduler System"
+    - "Settings Management API"
   test_all: false
   test_priority: "high_first"
 
