@@ -1515,10 +1515,97 @@ async def shutdown_event():
     # Stop scheduler
     scheduler.shutdown()
 
+# Database Seeding
+async def seed_subscription_plans():
+    """Seed default subscription plans"""
+    try:
+        # Check if plans already exist
+        existing_plans = await db.subscription_plans.count_documents({})
+        if existing_plans > 0:
+            return
+        
+        plans = [
+            SubscriptionPlan(
+                name="Free",
+                description="Basic features for personal use",
+                price=0.0,
+                duration_days=365,  # 1 year
+                max_groups=5,
+                max_messages_per_day=50,
+                features=[
+                    "Up to 5 groups",
+                    "50 messages per day",
+                    "Basic templates",
+                    "Community support"
+                ]
+            ),
+            SubscriptionPlan(
+                name="Premium",
+                description="Enhanced features for power users",
+                price=9.99,
+                duration_days=30,  # 1 month
+                max_groups=50,
+                max_messages_per_day=500,
+                features=[
+                    "Up to 50 groups",
+                    "500 messages per day",
+                    "Advanced templates",
+                    "Scheduler automation",
+                    "Priority support",
+                    "Analytics dashboard"
+                ]
+            ),
+            SubscriptionPlan(
+                name="Enterprise",
+                description="Full features for businesses",
+                price=29.99,
+                duration_days=30,  # 1 month
+                max_groups=999,
+                max_messages_per_day=9999,
+                features=[
+                    "Unlimited groups",
+                    "Unlimited messages",
+                    "Custom templates",
+                    "Advanced scheduler",
+                    "Dedicated support",
+                    "Custom integrations",
+                    "Team management",
+                    "Advanced analytics"
+                ]
+            )
+        ]
+        
+        for plan in plans:
+            await db.subscription_plans.insert_one(plan.dict())
+            
+        logging.info(f"Seeded {len(plans)} subscription plans")
+        
+    except Exception as e:
+        logging.error(f"Failed to seed subscription plans: {e}")
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize application on startup"""
+    try:
+        # Start scheduler
+        scheduler.start()
+        
+        # Seed subscription plans
+        await seed_subscription_plans()
+        
+        logging.info("Application startup completed")
+        
+    except Exception as e:
+        logging.error(f"Startup failed: {e}")
+
 # Root route for health check
 @app.get("/")
 async def root():
-    return {"message": "Telegram Auto Sender API", "version": "1.0.0"}
+    return {
+        "message": "Telegram Auto Sender API with User Management", 
+        "version": "2.0.0",
+        "features": ["User Authentication", "Subscription Management", "Telegram Integration"]
+    }
 
 if __name__ == "__main__":
     import uvicorn
