@@ -10,7 +10,7 @@ Proyek Telegram Auto Sender telah **sepenuhnya direfactor** menggunakan **best p
 
 ### **Backend: FastAPI + Clean Architecture**
 ```
-backend_new/
+backend/
 ├── main.py                 # Application entry point
 ├── requirements.txt        # Dependencies
 ├── .env.example           # Environment template
