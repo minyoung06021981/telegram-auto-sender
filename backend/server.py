@@ -916,7 +916,21 @@ async def get_settings():
 
 @api_router.put("/settings")
 async def update_settings(settings_data: AppSettings):
-    """Update application settings"""
+    """Update application settings with validation"""
+    # Validate settings data
+    if settings_data.min_message_interval < 0:
+        raise HTTPException(status_code=400, detail="Min message interval must be positive")
+    if settings_data.max_message_interval < 0:
+        raise HTTPException(status_code=400, detail="Max message interval must be positive")
+    if settings_data.min_message_interval >= settings_data.max_message_interval:
+        raise HTTPException(status_code=400, detail="Min message interval must be less than max message interval")
+    if settings_data.min_cycle_interval < 0:
+        raise HTTPException(status_code=400, detail="Min cycle interval must be positive")
+    if settings_data.max_cycle_interval < 0:
+        raise HTTPException(status_code=400, detail="Max cycle interval must be positive")
+    if settings_data.min_cycle_interval >= settings_data.max_cycle_interval:
+        raise HTTPException(status_code=400, detail="Min cycle interval must be less than max cycle interval")
+    
     await db.settings.update_one(
         {},
         {"$set": settings_data.dict()},
