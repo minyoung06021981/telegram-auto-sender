@@ -30,3 +30,4 @@ apscheduler>=3.10.4
 redis>=5.0.1
 python-socketio>=5.7.2
 aiofiles>=24.1.0
+tzlocal>=5.0
