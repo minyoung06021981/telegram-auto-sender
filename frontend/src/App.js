@@ -117,7 +117,10 @@ function App() {
 
   const loadSessions = async () => {
     try {
-      const response = await axios.get(`${API}/auth/sessions`);
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.get(`${API}/auth/sessions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setSessions(response.data);
     } catch (error) {
       console.error('Error loading sessions:', error);
