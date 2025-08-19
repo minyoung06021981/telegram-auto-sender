@@ -187,76 +187,101 @@ const UserAuth = () => {
         {/* Register Form */}
         {!isLogin && (
           <form onSubmit={handleRegister} className="space-y-6">
-            <div>
+            <div className="form-field">
               <label className="form-label">Nama Lengkap</label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Masukkan nama lengkap Anda"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Masukkan nama lengkap Anda"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Pilih username unik"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Pilih username unik"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Masukkan email Anda"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Masukkan email Anda"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Buat password (min. 6 karakter)"
-                required
-                minLength={6}
-              />
+              <div className="form-input-icon">
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Buat password (min. 6 karakter)"
+                  required
+                  minLength={6}
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">Konfirmasi Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Ulangi password Anda"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Ulangi password Anda"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-lg py-4"
+              className="btn-primary w-full text-lg py-4 mt-8"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
