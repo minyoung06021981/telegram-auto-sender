@@ -957,7 +957,7 @@ async def update_settings(settings_data: AppSettings):
 # Scheduler Routes
 
 @api_router.post("/scheduler/start")
-async def start_scheduler(session_id: str, background_tasks: BackgroundTasks):
+async def start_scheduler(session_id: str = Query(...), background_tasks: BackgroundTasks = BackgroundTasks()):
     """Start automatic message scheduler with immediate first cycle"""
     # Validate authentication
     client = await get_active_client(session_id)
@@ -984,7 +984,7 @@ async def start_scheduler(session_id: str, background_tasks: BackgroundTasks):
     return {"message": "Scheduler started - first cycle running immediately", "immediate_execution": True}
 
 @api_router.post("/scheduler/stop")
-async def stop_scheduler(session_id: str):
+async def stop_scheduler(session_id: str = Query(...)):
     """Stop automatic message scheduler"""
     # Validate authentication
     client = await get_active_client(session_id)
