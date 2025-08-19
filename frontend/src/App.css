@@ -2,19 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles for the Telegram Auto Sender app */
+/* Custom styles for the Telegram Auto Sender app - Modern Telegram Theme */
 
 .app-container {
   min-height: 100vh;
 }
 
-/* Login Page Styles */
+/* Modern Telegram Colors */
+:root {
+  --telegram-blue: #2AABEE;
+  --telegram-blue-dark: #229ED9;
+  --telegram-blue-light: #64B5F6;
+  --telegram-bg: #FAFAFA;
+  --telegram-bg-dark: #17212B;
+  --telegram-surface: #FFFFFF;
+  --telegram-surface-dark: #242F3D;
+  --telegram-text: #000000;
+  --telegram-text-dark: #FFFFFF;
+  --telegram-text-secondary: #707579;
+  --telegram-accent: #40A7E3;
+  --telegram-success: #00C851;
+  --telegram-warning: #FF8800;
+  --telegram-error: #FF3838;
+}
+
+/* Login Page Styles - Modern Telegram */
 .login-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2AABEE 0%, #229ED9 50%, #64B5F6 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.05"/><circle cx="10" cy="90" r="0.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-1%) translateY(-2%) rotate(1deg); }
+  50% { transform: translateX(1%) translateY(1%) rotate(-1deg); }
+  75% { transform: translateX(-2%) translateY(1%) rotate(0.5deg); }
 }
 
 .login-card {
