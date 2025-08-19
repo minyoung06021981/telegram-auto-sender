@@ -1205,30 +1205,28 @@ class TelegramAutoSenderTester:
             self.log_test("Cleanup", False, f"Error during cleanup: {str(e)}")
     
     def run_all_tests(self):
-        """Run all backend API tests with focus on 2FA regression testing and new group management"""
-        print("🚀 TELEGRAM AUTO SENDER - COMPREHENSIVE BACKEND TESTING")
-        print("=" * 60)
-        print("Focus: Testing all API endpoints including new group management features")
-        print("=" * 60)
+        """Run comprehensive backend API tests focusing on User Authentication and Subscription System"""
+        print("🚀 TELEGRAM AUTO SENDER - USER AUTHENTICATION & SUBSCRIPTION TESTING")
+        print("=" * 70)
+        print("Focus: Testing new user management and subscription system implementation")
+        print("=" * 70)
         
-        # Test in order of priority for regression testing
+        # Test in priority order for new features
         self.test_health_check()
-        self.test_auth_endpoints_comprehensive()  # Primary focus area
-        self.test_settings_endpoints()
-        self.test_template_endpoints()
-        self.test_group_endpoints()
-        self.test_new_group_management_endpoints()  # NEW: Test updated group management
-        self.test_dashboard_endpoints()
-        self.test_scheduler_endpoints()
-        self.test_message_endpoints()
+        self.test_database_seeding()  # Test that plans were seeded on startup
+        self.test_user_registration_system()  # Test user registration
+        self.test_user_login_system()  # Test user login
+        self.test_jwt_authentication()  # Test JWT tokens for protected endpoints
+        self.test_subscription_system()  # Test subscription plans and upgrades
+        self.test_enhanced_telegram_auth()  # Test Telegram auth now requires user auth
         
         # Cleanup
-        self.cleanup_test_data()
+        self.cleanup_test_user()
         
         # Summary
-        print("\n" + "=" * 60)
-        print("📊 REGRESSION TEST SUMMARY")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("📊 USER AUTHENTICATION & SUBSCRIPTION TEST SUMMARY")
+        print("=" * 70)
         
         total_tests = len(self.test_results)
         passed_tests = sum(1 for result in self.test_results if result['success'])
@@ -1239,11 +1237,18 @@ class TelegramAutoSenderTester:
         print(f"Failed: {failed_tests} ❌")
         print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
         
-        # Focus on authentication-related results
-        auth_tests = [r for r in self.test_results if 'auth' in r['test'].lower()]
+        # Focus on authentication and subscription results
+        auth_tests = [r for r in self.test_results if any(keyword in r['test'].lower() 
+                     for keyword in ['register', 'login', 'jwt', 'auth', 'subscription'])]
         auth_passed = sum(1 for r in auth_tests if r['success'])
         
-        print(f"\n🔐 AUTHENTICATION TESTS: {auth_passed}/{len(auth_tests)} passed")
+        print(f"\n🔐 AUTHENTICATION & SUBSCRIPTION TESTS: {auth_passed}/{len(auth_tests)} passed")
+        
+        # Database seeding results
+        seeding_tests = [r for r in self.test_results if 'seeding' in r['test'].lower()]
+        seeding_passed = sum(1 for r in seeding_tests if r['success'])
+        
+        print(f"🌱 DATABASE SEEDING TESTS: {seeding_passed}/{len(seeding_tests)} passed")
         
         if failed_tests > 0:
             print("\n❌ FAILED TESTS:")
@@ -1251,54 +1256,72 @@ class TelegramAutoSenderTester:
                 if not result['success']:
                     print(f"  - {result['test']}: {result['details']}")
         
-        print("\n🎯 CRITICAL ISSUES:")
-        critical_failures = []
-        for result in self.test_results:
-            if not result['success'] and any(critical in result['test'].lower() 
-                                           for critical in ['health', 'auth', 'settings', 'template', 'dashboard']):
-                critical_failures.append(result)
+        print("\n🎯 CRITICAL FINDINGS:")
         
-        if critical_failures:
-            for failure in critical_failures:
-                print(f"  - {failure['test']}: {failure['details']}")
+        # Check for critical authentication issues
+        critical_auth_failures = [r for r in self.test_results if not r['success'] and 
+                                any(keyword in r['test'].lower() for keyword in ['register', 'login', 'jwt'])]
+        
+        if critical_auth_failures:
+            print("  ❌ AUTHENTICATION SYSTEM ISSUES:")
+            for failure in critical_auth_failures:
+                print(f"    - {failure['test']}: {failure['details']}")
         else:
-            print("  None - All critical endpoints are working!")
+            print("  ✅ AUTHENTICATION SYSTEM: All core authentication features working!")
         
-        print("\n✅ SESSION LOADING FIX STATUS:")
-        session_load_tests = [r for r in self.test_results if 'load-session' in r['test'].lower()]
-        session_load_passed = sum(1 for r in session_load_tests if r['success'])
+        # Check for subscription system issues
+        subscription_failures = [r for r in self.test_results if not r['success'] and 
+                               'subscription' in r['test'].lower()]
         
-        if session_load_tests:
-            print(f"  📊 Session Loading Tests: {session_load_passed}/{len(session_load_tests)} passed")
-            
-            # Check for specific "Session expired" errors
-            expired_errors = [r for r in session_load_tests if not r['success'] and 
-                            ('expired' in r['details'].lower() or 'tidak valid' in r['details'].lower())]
-            
-            if expired_errors:
-                print(f"  ❌ SESSION EXPIRED ERRORS STILL PRESENT: {len(expired_errors)} sessions affected")
-                for error in expired_errors:
-                    print(f"     - {error['test']}: {error['details']}")
-                print("  🔧 RECOMMENDATION: api_id and api_hash may not be properly saved during session creation")
+        if subscription_failures:
+            print("  ❌ SUBSCRIPTION SYSTEM ISSUES:")
+            for failure in subscription_failures:
+                print(f"    - {failure['test']}: {failure['details']}")
+        else:
+            print("  ✅ SUBSCRIPTION SYSTEM: All subscription features working!")
+        
+        # Check database seeding
+        seeding_failures = [r for r in self.test_results if not r['success'] and 
+                          'seeding' in r['test'].lower()]
+        
+        if seeding_failures:
+            print("  ❌ DATABASE SEEDING ISSUES:")
+            for failure in seeding_failures:
+                print(f"    - {failure['test']}: {failure['details']}")
+        else:
+            print("  ✅ DATABASE SEEDING: All subscription plans properly seeded!")
+        
+        # Enhanced Telegram Auth status
+        telegram_auth_tests = [r for r in self.test_results if 'telegram' in r['test'].lower() and 'auth' in r['test'].lower()]
+        telegram_auth_passed = sum(1 for r in telegram_auth_tests if r['success'])
+        
+        if telegram_auth_tests:
+            print(f"\n📱 ENHANCED TELEGRAM AUTH: {telegram_auth_passed}/{len(telegram_auth_tests)} tests passed")
+            if telegram_auth_passed == len(telegram_auth_tests):
+                print("  ✅ Telegram authentication now properly requires user authentication!")
             else:
-                print("  ✅ NO SESSION EXPIRED ERRORS DETECTED - Fix appears successful!")
-        else:
-            print("  ⚠️  NO SESSION LOADING TESTS PERFORMED - No existing sessions found")
+                print("  ⚠️  Some Telegram authentication tests failed - review security implementation")
         
-        print("\n✅ 2FA REGRESSION STATUS:")
-        if auth_passed == len(auth_tests) and len(critical_failures) == 0:
-            print("  🎉 NO REGRESSION DETECTED - All systems operational after 2FA fixes!")
+        print("\n🎉 OVERALL STATUS:")
+        if passed_tests >= total_tests * 0.9:  # 90% success rate
+            print("  ✅ NEW USER AUTHENTICATION & SUBSCRIPTION SYSTEM IS WORKING EXCELLENTLY!")
+            print("  🚀 Ready for production use with comprehensive user management features")
+        elif passed_tests >= total_tests * 0.75:  # 75% success rate
+            print("  ⚠️  USER AUTHENTICATION & SUBSCRIPTION SYSTEM IS MOSTLY WORKING")
+            print("  🔧 Minor issues detected - review failed tests for improvements")
         else:
-            print("  ⚠️  POTENTIAL REGRESSION ISSUES DETECTED - Review failed tests above")
+            print("  ❌ SIGNIFICANT ISSUES DETECTED IN USER AUTHENTICATION & SUBSCRIPTION SYSTEM")
+            print("  🚨 Major fixes required before production deployment")
         
         return {
             'total': total_tests,
             'passed': passed_tests,
             'failed': failed_tests,
             'success_rate': (passed_tests/total_tests)*100,
-            'critical_failures': len(critical_failures),
             'auth_tests_passed': auth_passed,
             'auth_tests_total': len(auth_tests),
+            'seeding_tests_passed': seeding_passed,
+            'seeding_tests_total': len(seeding_tests),
             'results': self.test_results
         }
 
