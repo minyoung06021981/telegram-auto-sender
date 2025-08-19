@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
