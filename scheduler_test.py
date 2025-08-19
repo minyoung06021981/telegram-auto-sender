@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional, List
 
 # Configuration - Using the correct URL from frontend/.env
-BASE_URL = "https://telegram-sender-3.preview.emergentagent.com/api"
+BASE_URL = "https://fix-all-issues.preview.emergentagent.com/api"
 WEBSOCKET_URL = "wss://schedule-trigger.preview.emergentagent.com/socket.io/?EIO=4&transport=websocket"
 
 class SchedulerSystemTester:

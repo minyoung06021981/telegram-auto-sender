@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration
-BASE_URL = "https://telegram-sender-3.preview.emergentagent.com/api"
+BASE_URL = "https://fix-all-issues.preview.emergentagent.com/api"
 
 class ComprehensiveSchedulerTester:
     def __init__(self):
