@@ -402,11 +402,11 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Comprehensive Production Readiness Verification"
+    - "Frontend Production Readiness Testing"
   stuck_tasks: 
     []
   test_all: true
-  test_priority: "production_ready"
+  test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
