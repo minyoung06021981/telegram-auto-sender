@@ -17,6 +17,10 @@ import asyncio
 import json
 import uuid
 import random
+import hashlib
+import secrets
+import jwt
+from functools import wraps
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 from pathlib import Path
