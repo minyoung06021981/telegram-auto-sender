@@ -83,20 +83,32 @@ const Settings = () => {
     </div>
   );
 
-  const InputField = ({ label, type = "number", value, onChange, min, max, suffix }) => (
-    <div>
+  const InputField = ({ label, type = "number", value, onChange, min, max, suffix, description }) => (
+    <div className="form-field">
       <label className="form-label">{label}</label>
-      <div className="flex items-center space-x-2">
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(type === 'number' ? parseInt(e.target.value) || 0 : e.target.value)}
-          className="form-input"
-          min={min}
-          max={max}
-        />
-        {suffix && <span className="text-sm text-gray-500">{suffix}</span>}
+      <div className="flex items-center space-x-3">
+        <div className="flex-1 form-input-icon">
+          <input
+            type={type}
+            value={value}
+            onChange={(e) => onChange(type === 'number' ? parseInt(e.target.value) || 0 : e.target.value)}
+            className="form-input"
+            min={min}
+            max={max}
+          />
+          <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+          </svg>
+        </div>
+        {suffix && (
+          <span className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm font-medium text-gray-600 min-w-[80px] text-center">
+            {suffix}
+          </span>
+        )}
       </div>
+      {description && (
+        <p className="text-xs text-gray-500 mt-1">{description}</p>
+      )}
     </div>
   );
 
