@@ -650,8 +650,9 @@ async def telegram_login(
         if not await client.is_user_authorized():
             sent_code = await client.send_code_request(auth_data.phone_number)
             
-            # Store client in active sessions
+            # Store client in active sessions with user context
             active_sessions[session_id] = client
+            session_user_map[session_id] = current_user["id"]  # Track which user owns this session
             
             return {
                 "session_id": session_id,
