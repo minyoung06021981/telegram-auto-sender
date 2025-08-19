@@ -21,6 +21,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 function App() {
+  // User Authentication State
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  // Telegram State  
   const [currentSession, setCurrentSession] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sessions, setSessions] = useState([]);
