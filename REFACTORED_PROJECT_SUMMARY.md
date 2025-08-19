@@ -271,10 +271,10 @@ yarn dev
 ### **Full Stack Development:**
 ```bash
 # Terminal 1 - Backend
-cd backend_new && python main.py
+cd backend && python main.py
 
-# Terminal 2 - Frontend  
-cd frontend_new && yarn dev
+# Terminal 2 - Frontend
+cd frontend && yarn dev
 ```
 
 ---
