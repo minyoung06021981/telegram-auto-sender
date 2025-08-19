@@ -138,7 +138,7 @@ const Settings = () => {
           title="Pengaturan Scheduler"
           description="Kontrol timing dan perilaku pengiriman pesan otomatis"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Interval Pesan Minimum"
               value={settings.min_message_interval}
@@ -146,6 +146,7 @@ const Settings = () => {
               min={1}
               max={60}
               suffix="detik"
+              description="Waktu minimum antara pengiriman pesan"
             />
             
             <InputField
@@ -155,6 +156,7 @@ const Settings = () => {
               min={settings.min_message_interval || 1}
               max={120}
               suffix="detik"
+              description="Waktu maksimum antara pengiriman pesan"
             />
             
             <InputField
@@ -164,6 +166,7 @@ const Settings = () => {
               min={10}
               max={1440}
               suffix="menit"
+              description="Waktu minimum untuk siklus baru"
             />
             
             <InputField
@@ -173,6 +176,7 @@ const Settings = () => {
               min={settings.min_cycle_interval || 10}
               max={1440}
               suffix="menit"
+              description="Waktu maksimum untuk siklus baru"
             />
             
             <InputField
@@ -182,6 +186,7 @@ const Settings = () => {
               min={1}
               max={10}
               suffix="kali"
+              description="Jumlah percobaan ulang jika gagal"
             />
           </div>
 
