@@ -402,12 +402,9 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Scheduler System"
-    - "Input Validation & Security"
-    - "Settings Management API"
+    - "Session Expired Fix - Backend"
   stuck_tasks: 
-    - "Scheduler System"
-    - "Settings Management API"
+    []
   test_all: false
   test_priority: "high_first"
 
