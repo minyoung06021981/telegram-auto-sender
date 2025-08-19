@@ -424,8 +424,214 @@ async def get_available_groups(session_id: str) -> List[str]:
 
 # API Routes
 
+# User Management Endpoints
+@api_router.post("/users/register")
+async def register_user(user_data: UserCreate):
+    """Register a new user"""
+    try:
+        # Check if username or email already exists
+        existing_user = await db.users.find_one({
+            "$or": [
+                {"username": user_data.username},
+                {"email": user_data.email}
+            ]
+        })
+        
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Username or email already exists")
+        
+        # Create new user
+        user = User(
+            username=user_data.username,
+            email=user_data.email,
+            password_hash=hash_password(user_data.password),
+            full_name=user_data.full_name
+        )
+        
+        # Insert to database
+        await db.users.insert_one(user.dict())
+        
+        # Create access token
+        token = create_access_token(user.id, user.username)
+        
+        return {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "full_name": user.full_name,
+                "subscription_type": user.subscription_type,
+                "api_token": user.api_token
+            },
+            "access_token": token,
+            "token_type": "bearer"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+
+@api_router.post("/users/login")
+async def login_user(login_data: UserLogin):
+    """User login with username/password"""
+    try:
+        # Find user
+        user = await db.users.find_one({"username": login_data.username})
+        
+        if not user or not verify_password(login_data.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid username or password")
+        
+        if not user.get("is_active", True):
+            raise HTTPException(status_code=401, detail="Account is disabled")
+        
+        # Check subscription
+        subscription_active = await check_subscription(user)
+        
+        # Create access token
+        token = create_access_token(user["id"], user["username"])
+        
+        return {
+            "user": {
+                "id": user["id"],
+                "username": user["username"],
+                "email": user["email"],
+                "full_name": user["full_name"],
+                "subscription_type": user["subscription_type"],
+                "subscription_active": subscription_active,
+                "api_token": user.get("api_token")
+            },
+            "access_token": token,
+            "token_type": "bearer"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+
+@api_router.get("/users/me")
+async def get_current_user_info(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get current user information"""
+    subscription_active = await check_subscription(current_user)
+    
+    return {
+        "id": current_user["id"],
+        "username": current_user["username"],
+        "email": current_user["email"],
+        "full_name": current_user["full_name"],
+        "subscription_type": current_user["subscription_type"],
+        "subscription_expires": current_user.get("subscription_expires"),
+        "subscription_active": subscription_active,
+        "api_token": current_user.get("api_token"),
+        "is_admin": current_user.get("is_admin", False),
+        "created_at": current_user["created_at"]
+    }
+
+@api_router.put("/users/me")
+async def update_user_profile(
+    user_update: UserUpdate,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Update user profile"""
+    try:
+        update_data = {}
+        
+        # Check for username conflict
+        if user_update.username and user_update.username != current_user["username"]:
+            existing = await db.users.find_one({"username": user_update.username})
+            if existing:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            update_data["username"] = user_update.username
+        
+        # Check for email conflict  
+        if user_update.email and user_update.email != current_user["email"]:
+            existing = await db.users.find_one({"email": user_update.email})
+            if existing:
+                raise HTTPException(status_code=400, detail="Email already exists")
+            update_data["email"] = user_update.email
+        
+        if user_update.full_name:
+            update_data["full_name"] = user_update.full_name
+            
+        if user_update.password:
+            update_data["password_hash"] = hash_password(user_update.password)
+        
+        if update_data:
+            update_data["updated_at"] = datetime.utcnow()
+            await db.users.update_one(
+                {"id": current_user["id"]},
+                {"$set": update_data}
+            )
+        
+        return {"message": "Profile updated successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Update failed: {str(e)}")
+
+# Subscription Endpoints
+@api_router.get("/subscription/plans")
+async def get_subscription_plans():
+    """Get available subscription plans"""
+    plans = await db.subscription_plans.find({"is_active": True}).to_list(None)
+    return plans
+
+@api_router.post("/subscription/upgrade")
+async def upgrade_subscription(
+    plan_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Upgrade user subscription (simplified for MVP)"""
+    try:
+        # Find plan
+        plan = await db.subscription_plans.find_one({"id": plan_id})
+        if not plan:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        
+        # Calculate expiry
+        expires_at = datetime.utcnow() + timedelta(days=plan["duration_days"])
+        
+        # Update user subscription
+        await db.users.update_one(
+            {"id": current_user["id"]},
+            {
+                "$set": {
+                    "subscription_type": plan["name"].lower(),
+                    "subscription_expires": expires_at,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        # Create subscription record
+        subscription = UserSubscription(
+            user_id=current_user["id"],
+            plan_id=plan_id,
+            expires_at=expires_at
+        )
+        
+        await db.user_subscriptions.insert_one(subscription.dict())
+        
+        return {
+            "message": "Subscription upgraded successfully",
+            "plan": plan["name"],
+            "expires_at": expires_at
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Subscription upgrade failed: {str(e)}")
+
+# Telegram Authentication (existing endpoints with user context)
 @api_router.post("/auth/login")
-async def telegram_login(auth_data: TelegramAuth):
+async def telegram_login(
+    auth_data: TelegramAuth,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Initialize Telegram login process (requires user authentication)"""
     """Initialize Telegram login process"""
     try:
         session_id = str(uuid.uuid4())
