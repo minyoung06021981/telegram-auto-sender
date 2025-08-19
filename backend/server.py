@@ -42,6 +42,10 @@ redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True, d
 ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY', Fernet.generate_key().decode())
 cipher_suite = Fernet(ENCRYPTION_KEY.encode())
 
+# JWT Configuration
+JWT_SECRET = os.environ.get('JWT_SECRET', secrets.token_urlsafe(32))
+JWT_ALGORITHM = "HS256"
+
 # FastAPI app
 app = FastAPI(title="Telegram Auto Sender", version="1.0.0")
 api_router = APIRouter(prefix="/api")
