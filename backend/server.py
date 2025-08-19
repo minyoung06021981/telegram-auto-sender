@@ -641,7 +641,15 @@ async def delete_group(group_id: str):
 
 @api_router.post("/templates", response_model=MessageTemplate)
 async def create_template(template_data: MessageTemplateCreate):
-    """Create message template"""
+    """Create message template with validation"""
+    # Validate template name
+    if not template_data.name or not template_data.name.strip():
+        raise HTTPException(status_code=400, detail="Template name cannot be empty or whitespace only")
+    
+    # Validate content
+    if not template_data.content or not template_data.content.strip():
+        raise HTTPException(status_code=400, detail="Template content cannot be empty")
+    
     # If setting as default, unset other defaults
     if template_data.is_default:
         await db.message_templates.update_many(
