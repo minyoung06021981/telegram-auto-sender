@@ -143,7 +143,28 @@ function App() {
     }, 5000);
   };
 
+  const handleUserLogout = () => {
+    // Clear user authentication
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userData');
+    setIsUserAuthenticated(false);
+    setCurrentUser(null);
+    
+    // Clear telegram session
+    setIsAuthenticated(false);
+    setCurrentSession(null);
+    clearSessionFromStorage();
+  };
+
   const contextValue = {
+    // User Authentication
+    currentUser,
+    setCurrentUser,
+    isUserAuthenticated,
+    setIsUserAuthenticated,
+    handleUserLogout,
+    
+    // Telegram Authentication
     currentSession,
     setCurrentSession,
     isAuthenticated,
