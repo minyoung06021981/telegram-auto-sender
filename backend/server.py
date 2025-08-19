@@ -943,6 +943,11 @@ async def update_settings(settings_data: AppSettings):
 @api_router.post("/scheduler/start")
 async def start_scheduler(session_id: str, background_tasks: BackgroundTasks):
     """Start automatic message scheduler with immediate first cycle"""
+    # Validate authentication
+    client = await get_active_client(session_id)
+    if not client:
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+    
     settings = await db.settings.find_one({}) or AppSettings().dict()
     
     # Clear existing jobs for this session
@@ -965,6 +970,11 @@ async def start_scheduler(session_id: str, background_tasks: BackgroundTasks):
 @api_router.post("/scheduler/stop")
 async def stop_scheduler(session_id: str):
     """Stop automatic message scheduler"""
+    # Validate authentication
+    client = await get_active_client(session_id)
+    if not client:
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+    
     # Remove all jobs for this session
     for job in scheduler.get_jobs():
         if job.id.startswith(f"auto_sender_{session_id}"):
