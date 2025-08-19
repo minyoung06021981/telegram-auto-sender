@@ -210,60 +210,108 @@ function App() {
               </div>
 
               <Routes>
+                {/* User Authentication Route */}
                 <Route
-                  path="/login"
+                  path="/user-auth"
                   element={
-                    !isAuthenticated ? (
-                      <LoginPage />
+                    !isUserAuthenticated ? (
+                      <UserAuth />
                     ) : (
-                      <Navigate to="/dashboard" replace />
+                      <Navigate to="/login" replace />
                     )
                   }
                 />
+                
+                {/* Telegram Authentication Route */}
+                <Route
+                  path="/login"
+                  element={
+                    isUserAuthenticated ? (
+                      !isAuthenticated ? (
+                        <LoginPage />
+                      ) : (
+                        <Navigate to="/dashboard" replace />
+                      )
+                    ) : (
+                      <Navigate to="/user-auth" replace />
+                    )
+                  }
+                />
+                
+                {/* Subscription Route */}
+                <Route
+                  path="/subscription"
+                  element={
+                    isUserAuthenticated ? (
+                      <SubscriptionPage />
+                    ) : (
+                      <Navigate to="/user-auth" replace />
+                    )
+                  }
+                />
+                
+                {/* Protected Routes */}
                 <Route
                   path="/dashboard"
                   element={
-                    isAuthenticated ? (
+                    isUserAuthenticated && isAuthenticated ? (
                       <Dashboard />
-                    ) : (
+                    ) : isUserAuthenticated ? (
                       <Navigate to="/login" replace />
+                    ) : (
+                      <Navigate to="/user-auth" replace />
                     )
                   }
                 />
                 <Route
                   path="/groups"
                   element={
-                    isAuthenticated ? (
+                    isUserAuthenticated && isAuthenticated ? (
                       <GroupManager />
-                    ) : (
+                    ) : isUserAuthenticated ? (
                       <Navigate to="/login" replace />
+                    ) : (
+                      <Navigate to="/user-auth" replace />
                     )
                   }
                 />
                 <Route
                   path="/messages"
                   element={
-                    isAuthenticated ? (
+                    isUserAuthenticated && isAuthenticated ? (
                       <MessageTemplates />
-                    ) : (
+                    ) : isUserAuthenticated ? (
                       <Navigate to="/login" replace />
+                    ) : (
+                      <Navigate to="/user-auth" replace />
                     )
                   }
                 />
                 <Route
                   path="/settings"
                   element={
-                    isAuthenticated ? (
+                    isUserAuthenticated && isAuthenticated ? (
                       <Settings />
-                    ) : (
+                    ) : isUserAuthenticated ? (
                       <Navigate to="/login" replace />
+                    ) : (
+                      <Navigate to="/user-auth" replace />
                     )
                   }
                 />
                 <Route
                   path="/"
                   element={
-                    <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
+                    <Navigate 
+                      to={
+                        !isUserAuthenticated 
+                          ? "/user-auth" 
+                          : !isAuthenticated 
+                            ? "/login" 
+                            : "/dashboard"
+                      } 
+                      replace 
+                    />
                   }
                 />
               </Routes>
