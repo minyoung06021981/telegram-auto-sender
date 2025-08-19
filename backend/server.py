@@ -125,6 +125,60 @@ class SessionInfo(BaseModel):
     is_authenticated: bool
     user_info: Optional[Dict[str, Any]] = None
 
+# User Management and Subscription Models
+class User(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: str
+    password_hash: str
+    full_name: str
+    is_active: bool = True
+    is_admin: bool = False
+    subscription_type: str = "free"  # free, premium, enterprise
+    subscription_expires: Optional[datetime] = None
+    api_token: Optional[str] = Field(default_factory=lambda: f"tk_{uuid.uuid4().hex[:24]}")
+    telegram_sessions: List[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    full_name: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    password: Optional[str] = None
+
+class SubscriptionPlan(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    price: float
+    duration_days: int
+    max_groups: int
+    max_messages_per_day: int
+    features: List[str] = Field(default_factory=list)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class UserSubscription(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    plan_id: str
+    status: str = "active"  # active, expired, cancelled
+    started_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime
+    payment_method: Optional[str] = None
+    transaction_id: Optional[str] = None
+
 class SendMessageJob(BaseModel):
     group_ids: List[str]
     message_template_id: str
