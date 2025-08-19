@@ -677,7 +677,15 @@ async def get_default_template():
 
 @api_router.put("/templates/{template_id}")
 async def update_template(template_id: str, template_data: MessageTemplateCreate):
-    """Update message template"""
+    """Update message template with validation"""
+    # Validate template name
+    if not template_data.name or not template_data.name.strip():
+        raise HTTPException(status_code=400, detail="Template name cannot be empty or whitespace only")
+    
+    # Validate content
+    if not template_data.content or not template_data.content.strip():
+        raise HTTPException(status_code=400, detail="Template content cannot be empty")
+    
     # If setting as default, unset other defaults
     if template_data.is_default:
         await db.message_templates.update_many(
