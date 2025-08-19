@@ -201,50 +201,65 @@ const LoginPage = () => {
         )}
 
         {step === 'new' && (
-          <form onSubmit={handleNewLogin} className="space-y-4">
-            <div>
+          <form onSubmit={handleNewLogin} className="space-y-6">
+            <div className="form-field">
               <label className="form-label">API ID</label>
-              <input
-                type="text"
-                name="api_id"
-                value={formData.api_id}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Masukkan API ID dari my.telegram.org"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="text"
+                  name="api_id"
+                  value={formData.api_id}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Masukkan API ID dari my.telegram.org"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-2H7v-2H4a1 1 0 01-1-1v-4a1 1 0 011-1h2.586l4.707-4.707C10.923 3.663 12 4.109 12 5v4.586l4.707 4.707A1 1 0 0117 15z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">API Hash</label>
-              <input
-                type="text"
-                name="api_hash"
-                value={formData.api_hash}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Masukkan API Hash dari my.telegram.org"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="text"
+                  name="api_hash"
+                  value={formData.api_hash}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Masukkan API Hash dari my.telegram.org"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
             </div>
 
-            <div>
+            <div className="form-field">
               <label className="form-label">Nomor Telepon</label>
-              <input
-                type="tel"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="+62812345678"
-                required
-              />
+              <div className="form-input-icon">
+                <input
+                  type="tel"
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="+62812345678"
+                  required
+                />
+                <svg className="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full"
+              className="btn-primary w-full mt-8"
             >
               {loading ? (
                 <div className="loading-spinner"></div>
