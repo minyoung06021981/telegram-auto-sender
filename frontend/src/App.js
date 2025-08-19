@@ -5,11 +5,13 @@ import io from 'socket.io-client';
 import './App.css';
 
 // Import components
+import UserAuth from './components/UserAuth';
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
 import GroupManager from './components/GroupManager';
 import MessageTemplates from './components/MessageTemplates';
 import Settings from './components/Settings';
+import SubscriptionPage from './components/SubscriptionPage';
 import Navigation from './components/Navigation';
 
 // Context for global state
