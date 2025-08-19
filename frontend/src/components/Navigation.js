@@ -56,9 +56,7 @@ const Navigation = () => {
   ];
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setCurrentSession(null);
-    clearSessionFromStorage();
+    handleUserLogout();
   };
 
   return (
