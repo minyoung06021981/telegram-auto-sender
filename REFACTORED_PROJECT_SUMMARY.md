@@ -261,7 +261,7 @@ python main.py
 
 ### **Frontend Development:**
 ```bash
-cd frontend_new
+cd frontend
 yarn install
 cp .env.example .env.local
 # Edit .env.local with your configuration
