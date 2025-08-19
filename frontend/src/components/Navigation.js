@@ -92,8 +92,43 @@ const Navigation = () => {
       </nav>
 
       <div className="p-4 border-t dark:border-gray-700">
+        {/* User Info */}
+        {currentUser && (
+          <div className="mb-4 p-4 bg-gradient-to-r from-telegram-blue/10 to-telegram-accent/10 rounded-xl border border-telegram-blue/20">
+            <div className="flex items-center mb-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-telegram-blue to-telegram-accent rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                {currentUser.full_name?.[0] || currentUser.username?.[0] || 'U'}
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-800 dark:text-white">
+                  {currentUser.full_name}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  @{currentUser.username}
+                </div>
+              </div>
+            </div>
+            
+            <div className={`px-3 py-1 rounded-full text-xs font-semibold text-center ${
+              currentUser.subscription_type === 'free' 
+                ? 'bg-gray-100 text-gray-600' 
+                : currentUser.subscription_type === 'premium'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800'
+            }`}>
+              {currentUser.subscription_type === 'free' && '🆓 Free Plan'}
+              {currentUser.subscription_type === 'premium' && '⭐ Premium'}
+              {currentUser.subscription_type === 'enterprise' && '👑 Enterprise'}
+            </div>
+          </div>
+        )}
+        
+        {/* Telegram Session Info */}
         {currentSession && (
           <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              Telegram Session:
+            </div>
             <div className="text-sm font-medium text-gray-800 dark:text-white">
               {currentSession.user_info?.first_name} {currentSession.user_info?.last_name}
             </div>
