@@ -1,40 +1,35 @@
-import { useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { toast } from 'sonner'
-import { MessageSquare, Eye, EyeOff, Loader2 } from 'lucide-react'
-
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/stores/auth-store'
-import { validateEmail } from '@/lib/utils'
+
+// Emergent logo component (simplified SVG)
+const EmergentLogo = () => (
+  <div className="flex items-center justify-center mb-8">
+    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-white rounded-full opacity-80"></div>
+    </div>
+  </div>
+)
 
 const registerSchema = z.object({
-  username: z.string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(20, 'Username must be less than 20 characters'),
-  email: z.string()
-    .min(1, 'Email is required')
-    .refine(validateEmail, 'Invalid email format'),
-  full_name: z.string().min(1, 'Full name is required'),
+  full_name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email format'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
 })
 
 type RegisterForm = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const navigate = useNavigate()
-  const { register: registerUser, isLoading } = useAuthStore()
+  const { register: registerUser, emergentAuth, isLoading, isAuthenticated } = useAuthStore()
 
   const {
     register,
@@ -44,9 +39,48 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   })
 
+  // Check if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard')
+    }
+  }, [isAuthenticated, navigate])
+
+  // Handle URL fragment authentication (from emergent auth callback)
+  useEffect(() => {
+    const handleAuth = async () => {
+      const hash = window.location.hash
+      if (hash && hash.includes('session_id=')) {
+        const sessionId = hash.split('session_id=')[1].split('&')[0]
+        if (sessionId) {
+          try {
+            await emergentAuth(sessionId)
+            navigate('/profile')
+          } catch (error: any) {
+            toast.error(error.message || 'Authentication failed')
+          }
+        }
+      }
+    }
+    
+    handleAuth()
+  }, [emergentAuth, navigate])
+
+  const handleEmergentLogin = () => {
+    const previewUrl = window.location.origin
+    const redirectUrl = `${previewUrl}/profile`
+    const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`
+    window.location.href = authUrl
+  }
+
   const onSubmit = async (data: RegisterForm) => {
     try {
-      const { confirmPassword, ...registerData } = data
+      // Generate username from email
+      const username = data.email.split('@')[0]
+      const registerData = {
+        ...data,
+        username
+      }
       await registerUser(registerData)
       toast.success('Account created successfully!')
       navigate('/dashboard')
@@ -56,142 +90,119 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <MessageSquare className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">AutoSender</span>
-          </div>
-          <CardTitle className="text-2xl">Create your account</CardTitle>
-          <CardDescription>
-            Sign up to get started with AutoSender
-          </CardDescription>
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-gray-900 border-gray-700">
+        <CardHeader className="text-center pb-8">
+          <EmergentLogo />
+          <h1 className="text-4xl font-bold text-white mb-2">Create an Account</h1>
+          <p className="text-gray-400">Already have an account? 
+            <Link to="/login" className="text-blue-400 hover:underline ml-1">Log In</Link>
+          </p>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="space-y-6">
+          {/* Google OAuth Button */}
+          <Button
+            onClick={handleEmergentLogin}
+            disabled={isLoading}
+            className="w-full h-12 bg-transparent border border-gray-600 text-white hover:bg-gray-800 flex items-center justify-center space-x-3"
+          >
+            <div className="w-5 h-5 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 rounded-full"></div>
+            <span>Continue with Google</span>
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-600"></span>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-gray-900 px-2 text-gray-400">or sign up with email</span>
+            </div>
+          </div>
+
+          {/* Email Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name" className="text-gray-300">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                  </div>
+                  <span>Enter your name</span>
+                </div>
+              </Label>
               <Input
                 id="full_name"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder=""
                 {...register('full_name')}
                 disabled={isLoading}
+                className="bg-transparent border-gray-600 text-white placeholder-gray-400 h-12"
               />
               {errors.full_name && (
-                <p className="text-sm text-destructive">{errors.full_name.message}</p>
+                <p className="text-sm text-red-400">{errors.full_name.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Choose a username"
-                {...register('username')}
-                disabled={isLoading}
-              />
-              {errors.username && (
-                <p className="text-sm text-destructive">{errors.username.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-gray-300">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                  </div>
+                  <span>Enter your email</span>
+                </div>
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder=""
                 {...register('email')}
                 disabled={isLoading}
+                className="bg-transparent border-gray-600 text-white placeholder-gray-400 h-12"
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-red-400">{errors.email.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  {...register('password')}
-                  disabled={isLoading}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLoading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
+              <Label htmlFor="password" className="text-gray-300">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                  </div>
+                  <span>Enter your password</span>
+                </div>
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder=""
+                {...register('password')}
+                disabled={isLoading}
+                className="bg-transparent border-gray-600 text-white placeholder-gray-400 h-12"
+              />
               {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
-                  {...register('confirmPassword')}
-                  disabled={isLoading}
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  disabled={isLoading}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                <p className="text-sm text-red-400">{errors.password.message}</p>
               )}
             </div>
 
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full h-12 bg-white text-black hover:bg-gray-200 font-semibold"
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              Sign Up
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link 
-                to="/login" 
-                className="text-primary hover:underline font-medium"
-              >
-                Sign in
-              </Link>
+          <div className="text-center">
+            <p className="text-sm text-gray-400">
+              By clicking Sign Up, you agree to our{' '}
+              <a href="#" className="text-blue-400 hover:underline">Terms of Service</a>
+              {' '}and{' '}
+              <a href="#" className="text-blue-400 hover:underline">Privacy Policy</a>.
             </p>
           </div>
         </CardContent>
