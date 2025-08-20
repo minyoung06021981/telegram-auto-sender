@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Bot, Plus, Settings, Smartphone } from 'lucide-react'
+import { Bot, Plus, Smartphone } from 'lucide-react'
 
 export default function TelegramPage() {
   return (
