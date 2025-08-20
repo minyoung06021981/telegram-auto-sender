@@ -16,7 +16,7 @@ import TemplatesPage from '@/pages/TemplatesPage'
 import SettingsPage from '@/pages/SettingsPage'
 
 function App() {
-  const { isAuthenticated, token, setLoading } = useAuthStore()
+  const { isAuthenticated, token } = useAuthStore()
   const { setTheme } = useAppStore()
 
   useEffect(() => {
