@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
+import { FileText, Plus } from 'lucide-react'
 
 export default function TemplatesPage() {
   return (
