@@ -49,6 +49,18 @@ class UserResponse(BaseModel):
     is_admin: bool
 
 
+class EmergentAuthRequest(BaseModel):
+    session_id: str
+
+
+class EmergentUserData(BaseModel):
+    id: str
+    email: str
+    name: str
+    picture: str
+    session_token: str
+
+
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register_user(
     request: RegisterRequest,
