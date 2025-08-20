@@ -679,12 +679,21 @@ class TelegramAutoSenderBackendTester:
         await self.test_api_docs()
         await self.test_openapi_schema()
         
-        # Authentication Flow Tests
+        # Traditional Authentication Flow Tests
         await self.test_user_registration()
         await self.test_user_login()
         await self.test_protected_endpoint_without_token()
         await self.test_get_current_user()
         await self.test_invalid_token()
+        
+        # NEW: Emergent Authentication Tests
+        print("\n🔐 Testing Emergent Authentication Integration...")
+        await self.test_emergent_auth_callback_invalid_session()
+        await self.test_emergent_auth_callback_valid_format()
+        await self.test_emergent_auth_endpoint_structure()
+        await self.test_emergent_auth_external_api_call()
+        await self.test_user_creation_from_emergent_data()
+        await self.test_session_cookie_handling()
         
         # Feature Endpoint Tests
         await self.test_telegram_sessions_endpoint()
