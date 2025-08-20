@@ -205,7 +205,7 @@ frontend:
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Implemented React 18 with TypeScript strict mode, Vite build tool, TanStack Query for server state, and proper type definitions. Modern development setup with hot reload."
+          comment: "Implemented React 18 with TypeScript strict mode, Vite build tool, TanStack Query for server state, and proper type definitions. Modern development setup with hot reload running on port 3000."
 
   - task: "Modern State Management (Zustand)"
     implemented: true
@@ -241,7 +241,7 @@ frontend:
     status_history:
         - working: "NA"
           agent: "main"
-          comment: "Implemented type-safe API client with Axios, proper error handling, token management, and request/response interceptors. Uses VITE_API_URL environment variable."
+          comment: "Implemented type-safe API client with Axios, proper error handling, token management, and request/response interceptors. Uses VITE_API_URL environment variable pointing to localhost:8001/api."
 
   - task: "Authentication UI & Flow"
     implemented: true
