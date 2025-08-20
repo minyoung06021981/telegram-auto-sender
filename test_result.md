@@ -101,7 +101,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Verify comprehensive synchronization and adherence to 2025 best practices for the fully refactored Telegram Auto Sender V2.0 application with Clean Architecture, TypeScript, modern state management (Zustand), and latest tech stack."
+user_problem_statement: "Perbaiki tampilan register / signup dan tampilan lainnya, saya melampirkan file contoh. Saya mau login/signup atau register bisa menggunakan langsung menggunakan google account contoh seperti tampilan login emergent.sh ini. Tapi tidak perlu login menggunakan github dan Apple account. Dan untuk or sign up with email hanya ada kolom nama, email, dan password saja.. Dan untuk tampilan keseluruhan tolong di perbaiki juga karena masih banyak yang salah dan tidak benar. Teliti saat anda memeriksa dan mengerjakan pembaruan ini."
 
 backend:
   - task: "FastAPI Clean Architecture Structure"
