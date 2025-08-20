@@ -232,7 +232,6 @@ frontend:
           comment: "Integrated Emergent authentication flow in frontend. Added emergentAuth function to auth store, created ProfilePage for auth callback handling, updated routing to support /profile callback, added URL fragment parsing for session_id, and proper redirect flow from auth.emergentagent.com."
 
   - task: "React TypeScript Modern Setup"
-  - task: "React TypeScript Modern Setup"
     implemented: true
     working: true
     file: "/app/frontend/src/main.tsx"
