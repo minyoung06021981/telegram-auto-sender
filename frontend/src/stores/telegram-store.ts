@@ -1,9 +1,9 @@
 import { create } from 'zustand'
-import { TelegramState, TelegramActions, TelegramSession } from '@/types'
+import { TelegramState, TelegramActions } from '@/types'
 
 type TelegramStore = TelegramState & TelegramActions
 
-export const useTelegramStore = create<TelegramStore>()((set, get) => ({
+export const useTelegramStore = create<TelegramStore>()((set) => ({
   // State
   sessions: [],
   activeSession: null,
