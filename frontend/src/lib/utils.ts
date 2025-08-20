@@ -65,9 +65,9 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): T {
-  let timeout: NodeJS.Timeout
+  let timeout: number | undefined
   return ((...args: any[]) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), wait) as any
   }) as T
 }
