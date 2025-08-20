@@ -7,6 +7,7 @@ import { authApi } from '@/api/auth'
 // Pages
 import LoginPage from '@/pages/LoginPage'
 import RegisterPage from '@/pages/RegisterPage'
+import ProfilePage from '@/pages/ProfilePage'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import DashboardPage from '@/pages/DashboardPage'
 import TelegramPage from '@/pages/TelegramPage'
