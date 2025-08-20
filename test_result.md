@@ -287,11 +287,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "FastAPI Clean Architecture Structure"
-    - "Authentication System (Clean Architecture)"
-    - "Database Layer (MongoDB)"
     - "Modern State Management (Zustand)"
     - "API Client & Type Safety"
+    - "React TypeScript Modern Setup"
+    - "Modern UI Components (shadcn/ui)"
+    - "Authentication UI & Flow"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
