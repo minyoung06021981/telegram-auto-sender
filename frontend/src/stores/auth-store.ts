@@ -51,6 +51,24 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
+      emergentAuth: async (sessionId: string) => {
+        try {
+          set({ isLoading: true })
+          
+          const response = await authApi.emergentAuth(sessionId)
+          
+          set({
+            user: response.user,
+            token: response.access_token,
+            isAuthenticated: true,
+            isLoading: false
+          })
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
+        }
+      },
+
       logout: () => {
         set({
           user: null,
