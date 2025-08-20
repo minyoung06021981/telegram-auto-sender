@@ -104,6 +104,18 @@
 user_problem_statement: "Perbaiki tampilan register / signup dan tampilan lainnya, saya melampirkan file contoh. Saya mau login/signup atau register bisa menggunakan langsung menggunakan google account contoh seperti tampilan login emergent.sh ini. Tapi tidak perlu login menggunakan github dan Apple account. Dan untuk or sign up with email hanya ada kolom nama, email, dan password saja.. Dan untuk tampilan keseluruhan tolong di perbaiki juga karena masih banyak yang salah dan tidak benar. Teliti saat anda memeriksa dan mengerjakan pembaruan ini."
 
 backend:
+  - task: "Emergent Authentication Backend Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/src/infrastructure/web/api/auth_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented Emergent Authentication backend integration with /auth/emergent/callback endpoint. Added emergentintegrations library, created endpoint to handle session callback from auth.emergentagent.com, user creation/retrieval logic, and session cookie management with 7-day expiry."
+
   - task: "FastAPI Clean Architecture Structure"
     implemented: true
     working: true
