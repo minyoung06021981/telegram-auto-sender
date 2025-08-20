@@ -121,15 +121,18 @@ backend:
 
   - task: "Authentication System (Clean Architecture)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/src/infrastructure/web/api/auth_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented JWT-based authentication with clean architecture. Uses Domain entities, Application use cases, and Infrastructure repositories. Includes user registration, login, and profile endpoints with proper dependency injection."
+        - working: true
+          agent: "testing"
+          comment: "✅ TESTED: User registration working (POST /api/auth/register) with proper JWT token response. Login endpoint functional (POST /api/auth/login). Protected endpoint /api/auth/me correctly validates JWT tokens and returns user info. Invalid tokens properly rejected. Minor: HTTPBearer returns 403 instead of 401 for missing tokens, but functionality works correctly."
 
   - task: "Telegram Integration System"
     implemented: true
