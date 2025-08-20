@@ -136,15 +136,18 @@ backend:
 
   - task: "Telegram Integration System"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/src/infrastructure/web/api/telegram_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented Telegram session management with clean architecture patterns. Includes session creation, authentication, and management endpoints using domain services and repositories."
+        - working: true
+          agent: "testing"
+          comment: "✅ TESTED: Telegram sessions endpoints working correctly. GET /api/telegram/sessions returns empty list initially. POST /api/telegram/sessions creates sessions (using mock service for testing). All endpoints properly protected with JWT authentication. Mock Telegram service implementation working as expected for development/testing environment."
 
   - task: "Group Management System"
     implemented: true
