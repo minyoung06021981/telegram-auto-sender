@@ -136,3 +136,91 @@ async def refresh_api_token(
     await user_repository.save(current_user)
     
     return {"api_token": new_token}
+
+
+@router.post("/emergent/callback", response_model=TokenResponse)
+async def emergent_auth_callback(
+    request: EmergentAuthRequest,
+    response: Response,
+    user_repository: UserRepository = Depends(get_user_repository),
+    auth_service: AuthenticationService = Depends(get_authentication_service)
+):
+    """Handle Emergent authentication callback."""
+    try:
+        # Call Emergent auth API to get user data
+        async with httpx.AsyncClient() as client:
+            emergent_response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": request.session_id}
+            )
+            
+            if emergent_response.status_code != 200:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid session ID"
+                )
+            
+            user_data = EmergentUserData(**emergent_response.json())
+        
+        # Check if user exists by email
+        existing_user = await user_repository.find_by_email(user_data.email)
+        
+        if existing_user:
+            # User exists, generate JWT token
+            jwt_token = auth_service.create_access_token(data={"sub": existing_user.username})
+            user_response = {
+                "id": existing_user.id.value,
+                "username": existing_user.username,
+                "email": existing_user.email,
+                "full_name": existing_user.full_name,
+                "subscription_type": existing_user.subscription_type.value,
+                "subscription_active": existing_user.is_subscription_active(),
+                "api_token": existing_user.api_token,
+                "is_admin": existing_user.is_admin
+            }
+        else:
+            # Create new user
+            # Extract username from email (before @)
+            username = user_data.email.split('@')[0]
+            
+            # Make sure username is unique
+            counter = 1
+            original_username = username
+            while await user_repository.find_by_username(username):
+                username = f"{original_username}_{counter}"
+                counter += 1
+            
+            register_command = RegisterUserCommand(
+                username=username,
+                email=user_data.email,
+                password="emergent_auth",  # This won't be used for auth
+                full_name=user_data.name
+            )
+            
+            register_use_case = RegisterUserUseCase(user_repository, auth_service)
+            result = await register_use_case.execute(register_command)
+            user_response = result["user"]
+            jwt_token = result["access_token"]
+        
+        # Set session token as HttpOnly cookie
+        response.set_cookie(
+            key="session_token",
+            value=user_data.session_token,
+            max_age=7 * 24 * 60 * 60,  # 7 days
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/"
+        )
+        
+        return TokenResponse(
+            access_token=jwt_token,
+            token_type="bearer",
+            user=user_response
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Authentication failed: {str(e)}"
+        )
