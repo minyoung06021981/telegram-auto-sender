@@ -14,7 +14,6 @@ import TelegramPage from '@/pages/TelegramPage'
 import GroupsPage from '@/pages/GroupsPage'
 import TemplatesPage from '@/pages/TemplatesPage'
 import SettingsPage from '@/pages/SettingsPage'
-import LoadingScreen from '@/components/common/LoadingScreen'
 
 function App() {
   const { isAuthenticated, token, setLoading } = useAuthStore()
