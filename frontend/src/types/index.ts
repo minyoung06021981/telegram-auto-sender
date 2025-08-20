@@ -134,6 +134,7 @@ export interface AuthState {
 export interface AuthActions {
   login: (credentials: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<void>
+  emergentAuth: (sessionId: string) => Promise<void>
   logout: () => void
   updateUser: (user: User) => void
   setLoading: (loading: boolean) => void
