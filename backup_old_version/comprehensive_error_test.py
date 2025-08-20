@@ -15,8 +15,8 @@ from datetime import datetime
 from typing import Dict, Any, Optional, List
 
 # Configuration
-BASE_URL = "https://stack-upgrade.preview.emergentagent.com/api"
-HEALTH_URL = "https://stack-upgrade.preview.emergentagent.com"
+BASE_URL = "https://praktek-terkini.preview.emergentagent.com/api"
+HEALTH_URL = "https://praktek-terkini.preview.emergentagent.com"
 
 class ComprehensiveErrorTester:
     def __init__(self):
