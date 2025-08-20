@@ -1,7 +1,12 @@
 """Authentication API routes."""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import httpx
+from datetime import datetime, timedelta
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import Optional
 
 from ....application.use_cases.auth.register_user import RegisterUserUseCase, RegisterUserCommand
 from ....application.use_cases.auth.login_user import LoginUserUseCase, LoginUserCommand
