@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Configuration - Using the correct URL from frontend/.env
-BASE_URL = "https://praktek-terkini.preview.emergentagent.com/api"
+BASE_URL = "https://signup-overhaul.preview.emergentagent.com/api"
 
 class SecurityVerificationTester:
     def __init__(self):
