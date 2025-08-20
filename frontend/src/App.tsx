@@ -76,6 +76,9 @@ function App() {
             </PublicRoute>
           } 
         />
+        
+        {/* Profile page for auth callback - not protected */}
+        <Route path="/profile" element={<ProfilePage />} />
 
         {/* Protected Routes */}
         <Route
