@@ -23,6 +23,10 @@ class AuthApi {
     return apiClient.post<{ api_token: string }>('/auth/refresh-api-token')
   }
 
+  async emergentAuth(sessionId: string): Promise<AuthResponse> {
+    return apiClient.post<AuthResponse>('/auth/emergent/callback', { session_id: sessionId })
+  }
+
   setToken(token: string) {
     apiClient.setToken(token)
   }
