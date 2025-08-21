@@ -7,8 +7,8 @@ type AppStore = AppState & AppActions
 export const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
-      // State
-      theme: 'system',
+      // State - default to dark theme
+      theme: 'dark',
       sidebarCollapsed: false,
 
       // Actions
@@ -40,19 +40,14 @@ export const useAppStore = create<AppStore>()(
     {
       name: 'app-storage',
       onRehydrateStorage: () => (state) => {
-        // Apply theme on rehydration
-        if (state?.theme) {
-          const root = window.document.documentElement
-          root.classList.remove('light', 'dark')
-          
-          if (state.theme === 'system') {
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light'
-            root.classList.add(systemTheme)
-          } else {
-            root.classList.add(state.theme)
-          }
+        // Always apply dark theme on rehydration
+        const root = window.document.documentElement
+        root.classList.remove('light', 'dark')
+        root.classList.add('dark')
+        
+        // Set dark theme in state if not already set
+        if (state && state.theme !== 'dark') {
+          state.theme = 'dark'
         }
       },
     }
