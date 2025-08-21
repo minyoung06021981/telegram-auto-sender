@@ -59,9 +59,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center pb-8">
           <EmergentLogo />
-          <h1 className="text-4xl font-bold text-white mb-2">Sign In</h1>
-          <p className="text-gray-400">Already have an account? 
-            <Link to="/register" className="text-blue-400 hover:underline ml-1">Log In</Link>
+          <h1 className="text-4xl font-bold mb-2">Sign In</h1>
+          <p className="text-muted-foreground">Already have an account? 
+            <Link to="/register" className="text-primary hover:underline ml-1">Log In</Link>
           </p>
         </CardHeader>
 
