@@ -127,11 +127,11 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted-foreground">
               By clicking Sign In, you agree to our{' '}
-              <a href="#" className="text-blue-400 hover:underline">Terms of Service</a>
+              <a href="#" className="text-primary hover:underline">Terms of Service</a>
               {' '}and{' '}
-              <a href="#" className="text-blue-400 hover:underline">Privacy Policy</a>.
+              <a href="#" className="text-primary hover:underline">Privacy Policy</a>.
             </p>
           </div>
         </CardContent>
