@@ -105,10 +105,10 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300">
+              <Label htmlFor="password" className="text-foreground">
                 <div className="flex items-center space-x-2">
                   <div className="w-5 h-5 flex items-center justify-center">
-                    <div className="w-3 h-3 border border-gray-400 rounded"></div>
+                    <div className="w-3 h-3 border border-muted-foreground rounded"></div>
                   </div>
                   <span>Enter your password</span>
                 </div>
