@@ -8,7 +8,6 @@ Modern fullstack application for Telegram automation with **Clean Architecture**
 /app/
 ├── backend/                    # FastAPI + Clean Architecture
 ├── frontend/                   # React + TypeScript + Vite
-├── backup_old_version/         # Archived legacy code
 └── REFACTORED_PROJECT_SUMMARY.md
 ```
 
