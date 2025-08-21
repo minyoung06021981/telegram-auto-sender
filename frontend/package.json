@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "vite",
+    "start": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "update-browserslist": "npx update-browserslist-db@latest"
   },
   "dependencies": {
     "react": "^18.3.1",
