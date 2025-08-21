@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-900 border-gray-700">
+      <Card className="w-full max-w-md">
         <CardHeader className="text-center pb-8">
           <EmergentLogo />
           <h1 className="text-4xl font-bold text-white mb-2">Sign In</h1>
