@@ -6,6 +6,9 @@ import { Toaster } from '@/components/ui/toaster'
 import App from './App'
 import './index.css'
 
+// Apply dark theme immediately
+document.documentElement.classList.add('dark')
+
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
