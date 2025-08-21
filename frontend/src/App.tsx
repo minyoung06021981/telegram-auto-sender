@@ -20,19 +20,9 @@ function App() {
   const { theme, setTheme } = useAppStore()
 
   useEffect(() => {
-    // Initialize theme
-    const savedTheme = localStorage.getItem('app-storage')
-    if (savedTheme) {
-      try {
-        const parsed = JSON.parse(savedTheme)
-        if (parsed.state?.theme) {
-          setTheme(parsed.state.theme)
-        }
-      } catch (error) {
-        console.error('Failed to parse saved theme:', error)
-      }
-    }
-
+    // Force dark theme for now (as per user request for emergent.sh style)
+    setTheme('dark')
+    
     // Set token in API client if available
     if (token) {
       authApi.setToken(token)
