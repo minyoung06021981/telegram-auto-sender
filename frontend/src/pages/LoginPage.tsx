@@ -70,7 +70,7 @@ export default function LoginPage() {
           <Button
             onClick={handleEmergentLogin}
             disabled={isLoading}
-            className="w-full h-12 bg-transparent border border-gray-600 text-white hover:bg-gray-800 flex items-center justify-center space-x-3"
+            className="w-full h-12 bg-transparent border border-border hover:bg-secondary flex items-center justify-center space-x-3"
           >
             <div className="w-5 h-5 bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 rounded-full"></div>
             <span>Continue with Google</span>
