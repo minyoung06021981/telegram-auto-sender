@@ -20,8 +20,8 @@ from datetime import datetime
 from typing import Dict, Any, Optional, List
 
 # Configuration - Using the correct URL from frontend/.env
-BASE_URL = "https://signup-overhaul.preview.emergentagent.com/api"
-HEALTH_URL = "https://signup-overhaul.preview.emergentagent.com"
+BASE_URL = "https://tidy-archives.preview.emergentagent.com/api"
+HEALTH_URL = "https://tidy-archives.preview.emergentagent.com"
 
 class ProductionReadinessTester:
     def __init__(self):
