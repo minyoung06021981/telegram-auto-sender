@@ -73,5 +73,27 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.dark .bg-background': {
+          'background-color': 'rgb(31 41 55)', // gray-800
+        },
+        '.dark .bg-card': {
+          'background-color': 'rgb(17 24 39)', // gray-900
+        },
+        '.dark .text-foreground': {
+          'color': 'rgb(255 255 255)', // white
+        },
+        '.dark .text-card-foreground': {
+          'color': 'rgb(255 255 255)', // white
+        },
+        '.dark .border-border': {
+          'border-color': 'rgb(75 85 99)', // gray-600
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 }
