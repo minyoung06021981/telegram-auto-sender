@@ -9,6 +9,10 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 import time
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 from src.infrastructure.web.api.auth_routes import router as auth_router
 from src.infrastructure.web.api.telegram_routes import router as telegram_router  
