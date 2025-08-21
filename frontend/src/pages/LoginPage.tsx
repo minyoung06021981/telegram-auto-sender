@@ -81,7 +81,7 @@ export default function LoginPage() {
               <span className="w-full border-t border-gray-600"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gray-900 px-2 text-gray-400">or sign in with email</span>
+              <span className="px-2 text-muted-foreground">or sign in with email</span>
             </div>
           </div>
 
