@@ -17,7 +17,7 @@ import SettingsPage from '@/pages/SettingsPage'
 
 function App() {
   const { isAuthenticated, token } = useAuthStore()
-  const { setTheme } = useAppStore()
+  const { theme, setTheme } = useAppStore()
 
   useEffect(() => {
     // Initialize theme
