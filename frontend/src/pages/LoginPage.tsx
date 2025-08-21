@@ -117,7 +117,7 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 placeholder=""
-                className="bg-transparent border-gray-600 text-white placeholder-gray-400 h-12"
+                className="h-12"
               />
             </div>
 
